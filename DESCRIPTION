@@ -1,0 +1,31 @@
+Package: blindspiker
+Title: Report on bioassay laboratory blind spike sample analyses
+Version: 0.1.0
+Authors@R: 
+    person(given = "Mark",
+           family = "Hogue",
+           role = c("aut", "cre"),
+           email = "mark.hogue.chp@gmail.com")
+Description: This package provides functions to include all features from "SRS Blind Spikes-4.R" that were used in the report in October 2018, SRNS-J6700-2018-00221. This is an in-house package for Internal Dosimetry at the Savannah River Site.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: dplyr, 
+         readxl,
+         readr,
+         magrittr,
+         binGroup,
+         ggplot2,
+         tidyr,
+         stats,
+         car,
+         rio,
+         utf8,
+         haven,
+         carData,
+         abind
+RoxygenNote: 7.2.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
