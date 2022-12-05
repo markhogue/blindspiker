@@ -29,3 +29,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/markhogue/blindspiker
+BugReports: https://github.com/markhogue/blindspiker/issues
