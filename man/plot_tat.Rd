@@ -4,12 +4,12 @@
 \alias{plot_tat}
 \title{Plot turnaround time}
 \usage{
-plot_tat(select_analyte, df = bs_df, target_days = 60)
+plot_tat(select_analyte, dat = bs_df, target_days = 60)
 }
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
 
-\item{df}{data frame with all data needed as described in `get_data`.
+\item{dat}{data frame with all data needed as described in `get_data`.
 Default is `bs_df`.}
 
 \item{target_days}{The target turnaround time in days. Default = 60.}

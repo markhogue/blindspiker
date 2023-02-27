@@ -4,10 +4,10 @@
 \alias{table_spike}
 \title{Make table summarizing the blind spikes.}
 \usage{
-table_spike(df = bs_df)
+table_spike(dat = bs_df)
 }
 \arguments{
-\item{df}{data frame with all data needed as described in `get_data`.}
+\item{dat}{data frame with all data needed as described in `get_data`.}
 }
 \description{
 Make a table showing how many blind spike samples contained one or more analytes.
@@ -16,7 +16,7 @@ Make a table showing how many blind spike samples contained one or more analytes
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-table_spike(df = example_df)
+table_spike(dat = example_df)
 
 }
 \seealso{

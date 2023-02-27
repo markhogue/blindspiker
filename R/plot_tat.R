@@ -3,7 +3,7 @@
 #' Plot time for laboratory analysis by date (result date from lab - spiked sample submitted date)
 #'
 #' @param select_analyte the selected analyte for this run chart
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
 #' @param target_days The target turnaround time in days. Default = 60.
 #'
@@ -14,13 +14,13 @@
 #' plot_tat(select_analyte = 'unknownium', df = example_df, target_days = 60)
 #'
 #' @export
-plot_tat <- function(select_analyte, df = bs_df, target_days = 60) {
+plot_tat <- function(select_analyte, dat = bs_df, target_days = 60) {
 
     analyte <- spike_value <- sample_ID <- tat <-
       submission_date <- late <- bs_df <- k <- NULL
 
     # identify the same date range to be used for all plots in a report
-    df <- df %>%
+    df <- dat %>%
         dplyr::filter(analyte == select_analyte & spike_value != 0)
 
     df$tat <- as.numeric(df$result_date - df$submission_date)
