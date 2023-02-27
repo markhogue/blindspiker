@@ -21,6 +21,7 @@ table_spike <- function(df = bs_df) {
   bs_df <- result <- err_type <- det_lvl <- analyte <- spike_value <- NULL
 
   ind_anal_tbl <- df %>% dplyr::filter(spike_value == 0) %>%
+
     dplyr::group_by(analyte) %>%
     dplyr::summarise(count = dplyr::n())
 

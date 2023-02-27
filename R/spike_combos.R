@@ -12,16 +12,16 @@
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-#' spike_combos(analytes = c('unknownium', 'Sr-90'), df = example_df)
+#' spike_combos(analytes = c('unknownium', 'Sr-90'), dat = example_df)
 #'
 #' @export
 spike_combos <- function(analytes, dat = bs_df){
 
-
   # To avoid visible binding note in package check:
+
   analyte <- all_of <- bs_df <- spike_value <- NULL
 
-  # get all spike data from dat
+      # get all spike data from dat
   # selected columns are sample_ID, analyte, and spike_value
   spikes <- dat[dat$spike_value > 0, 1:3]
 
