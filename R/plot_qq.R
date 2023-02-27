@@ -2,21 +2,22 @@
 #'
 #' QQ plots by isotope
 #'
-#' @param my_dir directory where data files are stored in format 'C:/my_data_loc/'.
-#' Note the forward slashes.
-#'
 #' @param select_analyte the selected analyte for this run chart
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-#' plot_qq(select_analyte = 'unknownium', df = example_df)
+#' plot_qq(select_analyte = 'unknownium', dat = example_df)
 #'
 #' @export
 plot_qq <- function(select_analyte,
                     dat = bs_df) {
+
+  # To avoid visible binding note in package check:
+  analyte <- result <- spike_unit <- res_to_spike_ratio <-
+    spike_value <- bs_df <- NULL
 
   df <- dat %>%
     # keep only spiked values

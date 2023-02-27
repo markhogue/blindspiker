@@ -9,10 +9,7 @@ plot_qq(select_analyte, dat = bs_df)
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
 
-\item{my_dir}{directory where data files are stored in format 'C:/my_data_loc/'.
-Note the forward slashes.}
-
-\item{df}{data frame with all data needed as described in `get_data`.
+\item{dat}{data frame with all data needed as described in `get_data`.
 Default is `bs_df`.}
 }
 \description{
@@ -22,6 +19,6 @@ QQ plots by isotope
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-plot_qq(select_analyte = 'unknownium', df = example_df)
+plot_qq(select_analyte = 'unknownium', dat = example_df)
 
 }

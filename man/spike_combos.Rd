@@ -9,7 +9,7 @@ spike_combos(analytes, dat = bs_df)
 \arguments{
 \item{analytes}{a vector of analytes of interest}
 
-\item{df}{data frame with all data needed as described in `get_data`.
+\item{dat}{data frame with all data needed as described in `get_data`.
 Default is `bs_df`.}
 }
 \description{

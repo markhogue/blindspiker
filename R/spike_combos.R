@@ -3,7 +3,7 @@
 #' @description
 #' A summary of spiked samples is provided based on combinations of interest.
 #'
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
 #'
 #' @param analytes a vector of analytes of interest
@@ -16,6 +16,11 @@
 #'
 #' @export
 spike_combos <- function(analytes, dat = bs_df){
+
+
+  # To avoid visible binding note in package check:
+  analyte <- all_of <- bs_df <- spike_value <- NULL
+
   # get all spike data from dat
   # selected columns are sample_ID, analyte, and spike_value
   spikes <- dat[dat$spike_value > 0, 1:3]
@@ -34,9 +39,10 @@ spike_combos <- function(analytes, dat = bs_df){
     cat("This is a list of all spiked samples meeting the selection criteria,
         \n")
 
-  print.data.frame(spikes_wide[(complete.cases(just_analyte_cols)), c(1, cols_to_count)])
+  print.data.frame(spikes_wide[(stats::complete.cases(just_analyte_cols)),
+                               c(1, cols_to_count)])
 
   cat(paste0("The total number of spiked samples meeting the selction criteria is: ",
-  length(spikes_wide$sample_ID[(complete.cases(just_analyte_cols))])))
+  length(spikes_wide$sample_ID[(stats::complete.cases(just_analyte_cols))])))
 
 }

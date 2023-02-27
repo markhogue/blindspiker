@@ -11,18 +11,11 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: dplyr,
-         readr,
          magrittr,
          binGroup,
          ggplot2,
          tidyr,
-         stats,
-         car,
          rio,
-         utf8,
-         haven,
-         carData,
-         abind,
          gt
 RoxygenNote: 7.2.3
 Suggests: 

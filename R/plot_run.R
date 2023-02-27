@@ -7,7 +7,7 @@
 #' plotted, the spike values are shown with a small salmon-colored "+".
 #'
 #' @param select_analyte the selected analyte for this run chart
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
 #' @param matrix what the analyte is suspended in. For example, 'water'. Default
 #' is 'sample'.
@@ -19,7 +19,7 @@
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-#' plot_run(select_analyte = 'unknownium', df = example_df)
+#' plot_run(select_analyte = 'unknownium', dat = example_df)
 #'
 #' @export
 
@@ -29,6 +29,10 @@ plot_run <- function(select_analyte,
                      matrix = "sample",
                      log = "n")
   {
+
+  analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
+    high_res <- low_rat <- up_rat <- bs_df <- spike_overlap <- spike_value <-
+    NULL
 
   # If matrix option is changed, but 'original' is misspelled or missing,
   # change to 'original'

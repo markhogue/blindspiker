@@ -17,7 +17,10 @@
 #'
 table_spike <- function(df = bs_df) {
 
-  ind_anal_tbl <- example_df %>% dplyr::filter(spike_value == 0) %>%
+  # To avoid visible binding note in package check:
+  bs_df <- result <- err_type <- det_lvl <- analyte <- spike_value <- NULL
+
+  ind_anal_tbl <- df %>% dplyr::filter(spike_value == 0) %>%
     dplyr::group_by(analyte) %>%
     dplyr::summarise(count = dplyr::n())
 

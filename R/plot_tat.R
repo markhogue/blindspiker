@@ -15,6 +15,10 @@
 #'
 #' @export
 plot_tat <- function(select_analyte, df = bs_df, target_days = 60) {
+
+    analyte <- spike_value <- bs_df <-
+      sample_ID <- tat <- submission_date <- late <- NULL
+
     # identify the same date range to be used for all plots in a report
     df <- df %>%
         dplyr::filter(analyte == select_analyte & spike_value != 0)
