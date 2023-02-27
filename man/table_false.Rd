@@ -4,12 +4,12 @@
 \alias{table_false}
 \title{Make table of false positives and false negatives in laboratory results}
 \usage{
-table_false(select_analyte, df = bs_df)
+table_false(select_analyte, dat = bs_df)
 }
 \arguments{
 \item{select_analyte}{the selected analyte for this table}
 
-\item{df}{data frame with all data needed as described in `get_data`.}
+\item{dat}{data frame with all data needed as described in `get_data`.}
 }
 \description{
 Make a table with estimated confidence intervals for false negatives and

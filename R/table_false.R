@@ -19,7 +19,7 @@
 #' laboratory results.
 #'
 #' @param select_analyte the selected analyte for this table
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
@@ -30,9 +30,12 @@
 #' @export
 #'
 table_false <- function(select_analyte,
-                        df = bs_df) {
+                        dat = bs_df) {
 
-  df <- example_df %>% dplyr::filter(analyte == select_analyte)
+  # To avoid visible binding note in package check:
+  result <- err_type <- det_lvl <- analyte <- NULL
+
+  df <- dat %>% dplyr::filter(analyte == select_analyte)
 
   # false postive
   # The false positive rate is computed as the number of false positives divided

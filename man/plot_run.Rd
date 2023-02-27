@@ -15,6 +15,9 @@ plot_run(
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
 
+\item{dat}{data frame with all data needed as described in `get_data`.
+Default is `bs_df`.}
+
 \item{version}{The run chart is either shown with `original` units, default, or
 with the result shown as a `ratio` to the spike value.}
 
@@ -22,9 +25,6 @@ with the result shown as a `ratio` to the spike value.}
 is 'sample'.}
 
 \item{log}{Set log = "y" to make the y-axis a log scale. Default is "n".}
-
-\item{df}{data frame with all data needed as described in `get_data`.
-Default is `bs_df`.}
 }
 \description{
 `plot_run()` produces a Run Chart of the selected analyte. The analyte

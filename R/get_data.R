@@ -73,13 +73,16 @@
 get_data <- function(spike_data,
                            lab_data) {
 
+  # To avoid visible binding note in package check:
+  analyte <- units <- spike_unit <- NULL
+
   cat("Be sure to save the data to the global environment!")
   cat("\n")
   cat("bs_df <- get_spike_data...is recommended")
   cat("\n")
   cat("\n")
       # read spike data
-    spike_df <- read.csv(file = spike_data)
+    spike_df <- utils::read.csv(file = spike_data)
 
     # read lab data
     lab_df <- read.csv(file = lab_data)

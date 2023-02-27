@@ -7,7 +7,7 @@
 #' plotted, the spike values are shown with a small salmon-colored "+".
 #'
 #' @param select_analyte the selected analyte for this run chart
-#' @param df data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
 #' @param matrix what the analyte is suspended in. For example, 'water'. Default
 #' is 'sample'.
@@ -29,6 +29,9 @@ plot_run <- function(select_analyte,
                      matrix = "sample",
                      log = "n")
   {
+
+  analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
+    high_res <- low_rat <- high_rat <- NULL
 
   # If matrix option is changed, but 'original' is misspelled or missing,
   # change to 'original'
