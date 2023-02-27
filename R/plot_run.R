@@ -32,7 +32,7 @@ plot_run <- function(select_analyte,
 
   analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
   high_res <- low_rat <- up_rat <- bs_df <- spike_overlap <- spike_value <-
-    NULL
+  k <-  NULL
 
   # If matrix option is changed, but 'original' is misspelled or missing,
   # change to 'original'

@@ -25,7 +25,7 @@
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-#' table_false(df = example_df)
+#' table_false(dat = example_df)
 #'
 #' @export
 #'

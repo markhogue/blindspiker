@@ -15,7 +15,6 @@ Imports: dplyr,
          binGroup,
          ggplot2,
          tidyr,
-         rio,
          gt
 RoxygenNote: 7.2.3
 Suggests: 

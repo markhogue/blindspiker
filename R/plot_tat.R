@@ -17,7 +17,7 @@
 plot_tat <- function(select_analyte, df = bs_df, target_days = 60) {
 
     analyte <- spike_value <- sample_ID <- tat <-
-      submission_date <- late <- NULL
+      submission_date <- late <- bs_df <- k <- NULL
 
     # identify the same date range to be used for all plots in a report
     df <- df %>%
