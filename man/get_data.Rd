@@ -2,49 +2,80 @@
 % Please edit documentation in R/get_data.R
 \name{get_data}
 \alias{get_data}
-\title{Collect data from three spreadsheets. User must assign name of data frame generated.
-All functions default to look for data as `bs_df`}
+\title{Load data associated with the spiked samples and laboratory results
+from comma separated variable text files.}
 \usage{
-get_data(
-  my_dir,
-  lab_results,
-  spikeval = "Spiked Values.xlsx",
-  received_dates = "EBL Received Dates.xlsx"
-)
+get_data(spike_data, lab_data)
 }
 \arguments{
-\item{my_dir}{directory where data files are stored in format 'C:/my_data_loc/'.
-Note the forward slashes.}
+\item{spike_data}{name of the file, with path, containing the spike values.
+Example form, "C:/my_directory/my_spike_data.csv".
+This file should contain column headings identified above and may contain
+additional data identified above. If your file has different column names,
+you will have to identify them in the plotting and data analysis function
+parameters. This parameter is required, with no default.}
 
-\item{lab_results}{name of the file containing the spike values. This file must include
-the following columns in the range of A-I: SAMPLE_ID, RESULT_DATE, ISOTOPE, ACTIVITY,
-ERROR, and DET_LEVEL. No default.}
-
-\item{spikeval}{name of the file containing the spike values.
-This file must include the following in columns A-E: SAMPLE_ID, Received, Result,
-ISOTOPE, and SPIKED_VALUE. Default file name is 'Spiked Values.xlsx'}
-
-\item{received_dates}{name of the file containing the lab's received and posted dates. This
-file must include the following columns in the range of A-C: lngSampleNumber,
-dtmDateLogged, and dtmReceiveDate. Default file name = 'EBL Received Dates.xlsx'}
+\item{lab_data}{name of the file, with path, containing the laboratory
+results. Example form, "C:/my_directory/my_lab_data.csv".
+#' This file should contain column headings identified above and may contain
+additional data identified above. If your file has different column names,
+you will have to identify them in the plotting and data analysis function
+parameters. This parameter is required, with no default.}
 }
 \value{
-data frame containing all needed data to be used in subsequent functions.
-# add example
+data frame containing all needed data to be used in subsequent
+functions.
 }
 \description{
-This function collects data from three different sources.
-All data is read-in directly from the .xlsx files. Director and file names must be entered.
+This function loads spike data and the laboratory results, then processes
+it so that the `sample_ID` ties the spike value and the results together,
+using the `left_join` function from the `dplyr` package.
 }
 \details{
-The following data treatment is performed:
+False negative results are flagged for laboratory results below the detection
+level in the analysis of a sample spiked above the detection level.
+False positives are flagged for laboratory results above the detection when
+the analyte was not spiked. Error rates are computed with the `table_false`
+function.
 
-The error is divided by 2 so that the package will work with single coverage uncertainty terms.
+To use this function, first set up spike value data in a .csv file
+(in any column order) matching the column headers of the following values:
 
-Unused data columns are removed. Lab data (`lab_results` and `received_dates`) are combined.
-Then the data is `left_join`ed by SAMPLE_ID to `spikeval` (retaining all rows in `spikeval`).
+Required for spike data:
+`sample_ID` unique identifier, character or numeric
+`analyte` character data
+`spike_value` numeric value
+`spike_units` character data
+`submission_date` character data that will be converted to date in format
+ YYYY-MM-DD (for example 1999-12-31)
 
-Dates are converted to date formats. Isotopes are changed to proper capitalization.
+Optional for spike data:
+`sv_unc` numeric, the uncertainty of the spike value
+`sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+`provider lab` character name of laboratory providing spiked samples
 
-False negative and false positive values are flagged with an added `err_type` column.
+Required for laboratory results:
+`sample_ID` must match spike `sample_ID`
+`analyte` must match spike `analyte`
+`result` numeric value
+`units` must match `spike_units`
+`result_date`
+`det_lvl` numeric detection level
+`unc` numeric uncertainty of the laboratory result
+`k` the coverage factor for the result uncertainty (typically 1 or 2)
+
+Note that the two data sets (spike values and laboratory results) will
+be combined by `sample_ID`, and also by `analyte` if present in both sets.
+(If the laboratory data includes a non-zero result for an analyte not
+present in the spike data, that would indicate a false positive.)
+
+Use this function to load the spike data and establish a data frame named
+`bs_df`. All plotting and data analysis functions will default to look for
+this data set.
+}
+\examples{
+example_spike_data <- system.file("extdata", "spikevals.csv", package = "blindspiker")
+example_lab_data <- system.file("extdata", "labvals.csv", package = "blindspiker")
+example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+
 }
