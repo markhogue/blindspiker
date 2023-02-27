@@ -2,3 +2,10 @@
 inst/doc
 /doc/
 /Meta/
+.Rhistory
+.RData
+.Ruserdata
+News.Rmd
+Readme.Rmd
+.Rhistory
+.gitignore

@@ -17,24 +17,20 @@ knitr::opts_chunk$set(
 library(blindspiker)
 ```
 
-The R package, `blindspiker`, was initially developed for SRNS Internal Dosimetry based on an R script, "SRS Blind Spikes-4.R", written by Tom Labone. 
+The R package, `blindspiker`, was initially developed for the  Internal Dosimetry program at the Savannah River Site, based on an R script, "SRS Blind Spikes-4.R", written by Tom Labone. 
 
-**The first step in using the package is to get the data, with the `get_data` function.** This function reads in data directly from .xlsx files. See the help for `get_data` (`?get_data`) for the necessary spreadsheets and columns.
+The first step in using the package is to **load your data.** This is made easy **with the `get_data` ** function. This function reads in data directly from .csv files. See the help for `get_data` (`?get_data`) for the necessary columns.
 
-The `get_data` function reads in the three spreadsheets, processes them into one data frame, and exports the data in a file, **df.tsv** in the directory provided by the user in the `get_data` function. All subsequent functions count on the data to have been created. They read in the df.tsv file on each application. 
+To summarize the spike values provided to the laboratory,
 
-As long as the data has been loaded as described above, df.tsv should be accessible by R. Then, the following functions are available:
+**`table_spike` summarizes all individual spike values** and
 
-`bs_analytes` counts the different analyte combinations of spiked activity in the samples.
+**`spike_combos` provides any combinations** of spike values in individual samples that the user chooses to have tallied.
 
-`plot_cc` provides control charts. These charts plot the analytical results over time. The mean of the results included in the chart and the expected result of 0.05 dpm/L are plotted with horizontal lines on the chart. The 95% confidence interval in this chart, and the following three charts, are provided by the Clopper-Pearson interval method. This is provided with a function from the R package `bin_Group`. The Clopper–Pearson interval is an early and very common method for calculating binomial confidence intervals. This is often called an 'exact' method, because it is based on the cumulative probabilities of the binomial distribution (i.e., exactly the correct distribution rather than an approximation). 
+**`plot_run` provides run charts** with the option of plotting in analysis units or by a ratio of the laboratory results to the blind spike values. Both versions show uncertainty ranges of the results. Uncertainty bars are shown on the laboratory results and the ratios. When there is no overlap with the spike values, the laboratory result is either a false positive or a false negative. False positives are excluded from the ratio version when there is no spike value to avoid division by zero. 
 
-* `plot_false_neg` plots results with emphasis on false negatives. False negatives are results that should have been reported as positives based on the laboratory's detection level. This plot provides the activity above and the associated detection limit below. This aids in identifying any trends or unexpected results in the detection level.
+**`table_false` provides confidence intervals on error rates** for all laboratory results. 
 
-* `plot_er` plots results with emphasis on whether the 95% confidence interval includes the spike value and includes the uncertainty range of each result.
+**`plot_tat` plots the laboratory turnaround time** for each spike sample.
 
-* `plot_tat` plots the laboratory turnaround time for each spike sample.
-
-* `plot_qq` provides quantile-quantile plots of the results. Random errors are expected to fluctuate in a normally distributed pattern. When the QQ plot shows a deviation from normal, further investigation in the underlying process may be needed.
-
-
+**`plot_qq` provides quantile-quantile plots** of the results. Random errors are expected to fluctuate in a normally distributed pattern. When the QQ plot shows a deviation from normal, further investigation in the underlying process may be needed.

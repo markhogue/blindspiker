@@ -6,12 +6,11 @@ Authors@R:
            family = "Hogue",
            role = c("aut", "cre"),
            email = "mark.hogue.chp@gmail.com")
-Description: This package provides functions to include all features from "SRS Blind Spikes-4.R" that were used in the report in October 2018, SRNS-J6700-2018-00221. This is an in-house package for Internal Dosimetry at the Savannah River Site.
+Description: A blind spike program provides samples to a laboratory in order to  perform quality control (QC) checks. The samples provided are of a known quantity to the tester. The laboratory is typically uninformed of that the sample provided is a QC sample.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr, 
-         readxl,
+Imports: dplyr,
          readr,
          magrittr,
          binGroup,
@@ -23,11 +22,14 @@ Imports: dplyr,
          utf8,
          haven,
          carData,
-         abind
-RoxygenNote: 7.2.2
+         abind,
+         gt
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/markhogue/blindspiker
 BugReports: https://github.com/markhogue/blindspiker/issues
+Depends: 
+    R (>= 2.10)

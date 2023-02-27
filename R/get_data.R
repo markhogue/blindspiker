@@ -1,94 +1,168 @@
-#' Collect data from three spreadsheets. User must assign name of data frame generated.
-#' All functions default to look for data as `bs_df`
+#' Load data associated with the spiked samples and laboratory results
+#' from comma separated variable text files.
 #'
-#' This function collects data from three different sources.
-#' All data is read-in directly from the .xlsx files. Director and file names must be entered.
+#' This function loads spike data and the laboratory results, then processes
+#' it so that the `sample_ID` ties the spike value and the results together,
+#' using the `left_join` function from the `dplyr` package.
 #'
-#' The following data treatment is performed:
+#' False negative results are flagged for laboratory results below the detection
+#' level in the analysis of a sample spiked above the detection level.
+#' False positives are flagged for laboratory results above the detection when
+#' the analyte was not spiked. Error rates are computed with the `table_false`
+#' function.
 #'
-#' The error is divided by 2 so that the package will work with single coverage uncertainty terms.
+#' To use this function, first set up spike value data in a .csv file
+#' (in any column order) matching the column headers of the following values:
 #'
-#' Unused data columns are removed. Lab data (`lab_results` and `received_dates`) are combined.
-#' Then the data is `left_join`ed by SAMPLE_ID to `spikeval` (retaining all rows in `spikeval`).
+#' Required for spike data:
+#' `sample_ID` unique identifier, character or numeric
+#' `analyte` character data
+#' `spike_value` numeric value
+#' `spike_units` character data
+#' `submission_date` character data that will be converted to date in format
+#'  YYYY-MM-DD (for example 1999-12-31)
 #'
-#' Dates are converted to date formats. Isotopes are changed to proper capitalization.
+#' Optional for spike data:
+#' `sv_unc` numeric, the uncertainty of the spike value
+#' `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+#' `provider lab` character name of laboratory providing spiked samples
 #'
-#' False negative and false positive values are flagged with an added `err_type` column.
+#' Required for laboratory results:
+#' `sample_ID` must match spike `sample_ID`
+#' `analyte` must match spike `analyte`
+#' `result` numeric value
+#' `units` must match `spike_units`
+#' `result_date`
+#' `det_lvl` numeric detection level
+#' `unc` numeric uncertainty of the laboratory result
+#' `k` the coverage factor for the result uncertainty (typically 1 or 2)
 #'
-#' @param my_dir directory where data files are stored in format 'C:/my_data_loc/'.
-#' Note the forward slashes.
+#' Note that the two data sets (spike values and laboratory results) will
+#' be combined by `sample_ID`, and also by `analyte` if present in both sets.
+#' (If the laboratory data includes a non-zero result for an analyte not
+#' present in the spike data, that would indicate a false positive.)
 #'
-#' @param spikeval name of the file containing the spike values.
-#' This file must include the following in columns A-E: SAMPLE_ID, Received, Result,
-#' ISOTOPE, and SPIKED_VALUE. Default file name is 'Spiked Values.xlsx'
+#' Use this function to load the spike data and establish a data frame named
+#' `bs_df`. All plotting and data analysis functions will default to look for
+#' this data set.
 #'
-#' @param lab_results name of the file containing the spike values. This file must include
-#' the following columns in the range of A-I: SAMPLE_ID, RESULT_DATE, ISOTOPE, ACTIVITY,
-#' ERROR, and DET_LEVEL. No default.
+#' @param spike_data name of the file, with path, containing the spike values.
+#' Example form, "C:/my_directory/my_spike_data.csv".
+#' This file should contain column headings identified above and may contain
+#' additional data identified above. If your file has different column names,
+#' you will have to identify them in the plotting and data analysis function
+#' parameters. This parameter is required, with no default.
 #'
-#' @param received_dates name of the file containing the lab's received and posted dates. This
-#' file must include the following columns in the range of A-C: lngSampleNumber,
-#' dtmDateLogged, and dtmReceiveDate. Default file name = 'EBL Received Dates.xlsx'
+#' @param lab_data name of the file, with path, containing the laboratory
+#' results. Example form, "C:/my_directory/my_lab_data.csv".
+#' #' This file should contain column headings identified above and may contain
+#' additional data identified above. If your file has different column names,
+#' you will have to identify them in the plotting and data analysis function
+#' parameters. This parameter is required, with no default.
 #'
-#' @return data frame containing all needed data to be used in subsequent functions.
-#' # add example
+#' @return data frame containing all needed data to be used in subsequent
+#' functions.
+#'
+#' @examples
+#' example_spike_data <- system.file("extdata", "spikevals.csv", package = "blindspiker")
+#' example_lab_data <- system.file("extdata", "labvals.csv", package = "blindspiker")
+#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#'
 #' @export
 
-get_data <- function(my_dir, lab_results, spikeval = "Spiked Values.xlsx", received_dates = "EBL Received Dates.xlsx") {
+get_data <- function(spike_data,
+                           lab_data) {
 
-    setwd(my_dir)
-    spike_df <- readxl::read_excel(path = paste0(my_dir, "/", spikeval), range = readxl::cell_cols("A:E"))
-    res_df <- readxl::read_excel(path = paste0(my_dir, "/", lab_results), range = readxl::cell_cols("A:I"))
-    rec_df <- readxl::read_excel(path = paste0(my_dir, "/", received_dates), range = readxl::cell_cols("A:C"))
+  cat("Be sure to save the data to the global environment!")
+  cat("\n")
+  cat("bs_df <- get_spike_data...is recommended")
+  cat("\n")
+  cat("\n")
+      # read spike data
+    spike_df <- read.csv(file = spike_data)
 
-    # retain only columns called for
-    spike_df <- spike_df %>%
-        dplyr::select(c("SAMPLE_ID", "Received", "Result", "ISOTOPE", "SPIKED_VALUE"))
-    res_df <- res_df %>%
-        dplyr::select(c("SAMPLE_ID", "RESULT_DATE", "ISOTOPE", "ACTIVITY", "ERROR",
-            "DET_LEVEL"))
-    rec_df <- rec_df %>%
-        dplyr::select(c("lngSampleNumber", "dtmDateLogged", "dtmReceiveDate"))
+    # read lab data
+    lab_df <- read.csv(file = lab_data)
 
-    bs_df <- dplyr::left_join(res_df, rec_df, by = c(SAMPLE_ID = "lngSampleNumber")) %>%
-        dplyr::left_join(spike_df)
+    # check for analyte match
+    # if not spiked, it probably shouldn't be in lab data
+    spike_analytes <- unique(spike_df$analyte)
+    lab_analytes <- unique(lab_df$analyte)
 
-    # correct data structure
-    bs_df$SAMPLE_ID <- as.factor(bs_df$SAMPLE_ID)
-    bs_df$RESULT_DATE <- as.Date(substr(bs_df$RESULT_DATE, 1, 10), format = "%Y-%m-%d")
+    # get lab_analytes index matching spike_analytes
+    analyte_mismatch_ind <- !lab_analytes %in% spike_analytes
+    analyte_mismatch <- lab_analytes[analyte_mismatch_ind]
 
-    # make these itotopes look a little better
-    bs_df$ISOTOPE[bs_df$ISOTOPE == "AM-241"] <- "Am-241"
-    bs_df$ISOTOPE[bs_df$ISOTOPE == "NP-237"] <- "Np-237"
-    bs_df$ISOTOPE[bs_df$ISOTOPE == "PU-238"] <- "Pu-238"
-    bs_df$ISOTOPE[bs_df$ISOTOPE == "PU-239"] <- "Pu-239"
+    # print mismatched analytes to screen
+      if(any(analyte_mismatch_ind == TRUE)) {
+        cat(paste0("WARNING: ", analyte_mismatch,
+          " is reported by the lab, but is not in spike data. \n")) }
+    else{ cat("Analytes check - lab data and spike analytes all match.")
+    }
+      cat("\n")
+      cat("\n")
 
-    # data cleanup
-    bs_df$ISOTOPE <- as.factor(bs_df$ISOTOPE)
-    bs_df$dtmDateLogged <- as.Date(bs_df$dtmDateLogged)
-    bs_df$dtmReceiveDate <- as.Date(bs_df$dtmReceiveDate)
-    bs_df$Received <- as.Date(bs_df$Received)
-    bs_df$Result <- as.Date(bs_df$Result)
-    bs_df$dtmDateLogged <- as.Date(bs_df$dtmDateLogged)
-    bs_df$SPIKED_VALUE <- as.numeric(bs_df$SPIKED_VALUE)
+    bs_df <-
+        dplyr::full_join(spike_df,lab_df,
+                          by = c("sample_ID", "analyte"))
+
+    # this allows for evenly-spaced plots
+    bs_df$sample_ID <- as.character(bs_df$sample_ID)
+
+    # put results in report date order
+    bs_df <- bs_df[order(bs_df$result_date), ]
+
+    # Check the data
+    # correct and correct data structure
+    bs_df$result_date <- as.Date(bs_df$result_date)
+    bs_df$submission_date <- as.Date(bs_df$submission_date)
 
     # Spiked Values that are NA are blanks, so no spike value, therefore set to
     # zero
-    bs_df$SPIKED_VALUE[is.na(bs_df$SPIKED_VALUE)] <- 0
+    bs_df$spike_value[is.na(bs_df$spike_value)] <- 0
 
-    # add column for activity - detection level where negative = not detected
-    bs_df$del_act_det <- bs_df$ACTIVITY - bs_df$DET_LEVEL
+    # reporting a reading below the detection level is not a false positive
+    # false negative = result below detection level when spike is above
+    # false positive = result is above detection level when spike is zero
 
     # identify false negatives and false positives
     bs_df <- bs_df %>%
-        dplyr::mutate(err_type = dplyr::case_when(del_act_det > 0 & SPIKED_VALUE ==
-            0 ~ "false_pos", del_act_det < 0 & SPIKED_VALUE > 0 ~ "false_neg", TRUE ~
-            "no_err_cat"))
+        dplyr::mutate(err_type =
 
-    # make the error k=1, expecting lab report at k=2
-    bs_df$ERROR <- bs_df$ERROR/2
+      # false negative = result below detection level when spike is above
+    dplyr::case_when(result < det_lvl & spike_value > det_lvl ~ "false_neg",
 
+      # false positive = result is above detection level when spike is zero
+          result > det_lvl & spike_value == 0 ~ "false_pos",
+          TRUE ~ "no_err_cat"))
 
-    readr::write_tsv(bs_df, file = paste0(my_dir, "/", "bs_df.tsv"))
-    bs_df
+    # check for unit match
+    # but only for spiked analytes
+    unit_check <- bs_df %>% dplyr::filter(spike_value > 0)
+    # make Boolean term for each row
+    unit_check$units_same <- unit_check$units == unit_check$spike_unit
+
+     # filter out rows that don't have a mismatch
+      unit_check <- unit_check[unit_check$units_same == FALSE, ]
+      # remove NA's from unit_check
+      unit_check <- unit_check[!is.na(unit_check$units), ]
+
+    if(length(unit_check$units_same) > 0) {
+      cat("WARNING: Some units don't match! See table below:")
+      cat("\n")
+      cat("\n")
+      # get a unique set of mismatched units with analytes
+      mismatches <- unit_check %>%
+        dplyr::select(c(analyte, units, spike_unit))
+      mismatch_index <- !duplicated(mismatches)
+      mismatches <- data.frame(mismatches[mismatch_index, ])
+      names(mismatches) <- c("analyte", "lab unit", "spike unit")
+      print.data.frame(mismatches, row.names = F)
+    }
+
+    if(length(unit_check$units_same) == 0) {
+      cat("Unit check - spike units and lab units all match.")
+      cat("\n")
+}
+          bs_df
 }

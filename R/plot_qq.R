@@ -5,25 +5,31 @@
 #' @param my_dir directory where data files are stored in format 'C:/my_data_loc/'.
 #' Note the forward slashes.
 #'
-#' @param compiled_data Data compiled with blindspiker::get_data.R. Defaults to 'df.tsv'
-#'
-#' @param isotope What is being analyzed
+#' @param select_analyte the selected analyte for this run chart
+#' @param df data frame with all data needed as described in `get_data`.
+#' Default is `bs_df`.
+#' @examples
+#' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
+#' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
+#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#' plot_qq(select_analyte = 'unknownium', df = example_df)
 #'
 #' @export
-plot_qq <- function(my_dir, df = bs_df, isotope) {
+plot_qq <- function(select_analyte,
+                    dat = bs_df) {
 
-    # compiled_data <- paste0(my_dir, '/', compiled_data)
+  df <- dat %>%
+    # keep only spiked values
+    dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(spike_value > 0) %>%
+    dplyr::filter(result > 0) %>%
+    dplyr::mutate(res_to_spike_ratio = result / spike_value)
 
-    ISOTOPE <- SPIKED_VALUE <- NULL
-
-
-    # df <- readr::read_tsv(compiled_data)
-    df <- df %>%
-        dplyr::filter(ISOTOPE == isotope & SPIKED_VALUE != 0)
-
-    car::qqPlot(df$ACTIVITY, xlab = "Standard Normal Quantiles",
-                id = FALSE,
-                ylab = paste0(isotope, " in urine (dpm/L)"))
+ggplot2::ggplot(df, ggplot2::aes(sample = res_to_spike_ratio)) +
+  ggplot2::geom_qq() +
+  ggplot2::geom_qq_line() +
+  ggplot2::ggtitle(paste0("quantile-quantile plot of ", select_analyte,
+                 " results / spike values"))
 
 }
 

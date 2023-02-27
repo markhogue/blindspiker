@@ -4,18 +4,23 @@
 \alias{plot_tat}
 \title{Plot turnaround time}
 \usage{
-plot_tat(my_dir, df = bs_df, isotope, target_days = 60)
+plot_tat(select_analyte, df = bs_df, target_days = 60)
 }
 \arguments{
-\item{my_dir}{directory where data files are stored in format 'C:/my_data_loc/'.
-Note the forward slashes.}
+\item{select_analyte}{the selected analyte for this run chart}
 
-\item{isotope}{What is being analyzed}
+\item{df}{data frame with all data needed as described in `get_data`.
+Default is `bs_df`.}
 
 \item{target_days}{The target turnaround time in days. Default = 60.}
-
-\item{compiled_data}{Data compiled with blindspiker::get_data.R.}
 }
 \description{
-Plot time for labratory analysis by date (result date from lab - lab received date)
+Plot time for laboratory analysis by date (result date from lab - spiked sample submitted date)
+}
+\examples{
+example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
+example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
+example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+plot_tat(select_analyte = 'unknownium', df = example_df, target_days = 60)
+
 }

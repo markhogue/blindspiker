@@ -1,66 +1,69 @@
 #' Plot turnaround time
 #'
-#' Plot time for labratory analysis by date (result date from lab - lab received date)
+#' Plot time for laboratory analysis by date (result date from lab - spiked sample submitted date)
 #'
-#' @param my_dir directory where data files are stored in format 'C:/my_data_loc/'.
-#' Note the forward slashes.
-#'
-#' @param compiled_data Data compiled with blindspiker::get_data.R.
-#'
-#' @param isotope What is being analyzed
-#'
+#' @param select_analyte the selected analyte for this run chart
+#' @param df data frame with all data needed as described in `get_data`.
+#' Default is `bs_df`.
 #' @param target_days The target turnaround time in days. Default = 60.
 #'
+#' @examples
+#' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
+#' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
+#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#' plot_tat(select_analyte = 'unknownium', df = example_df, target_days = 60)
+#'
 #' @export
-plot_tat <- function(my_dir, df = bs_df, isotope, target_days = 60) {
-
-    # to avoid note error on ggplot args
-    ACTIVITY <- `Am-241` <- ISOTOPE <- `Np-237` <- `Pu-238` <- `Pu-239` <- SAMPLE_ID <- SPIKED_VALUE <- Sample <- dtmReceiveDate <- Received <- TAT <- late <- . <- NULL
-
-    # compiled_data <- paste0(my_dir, '/', compiled_data) df <-
-    # readr::read_tsv(compiled_data)
-
+plot_tat <- function(select_analyte, df = bs_df, target_days = 60) {
     # identify the same date range to be used for all plots in a report
-    xlims <- range(c(df$Result, df$dtmReceiveDate))
-
     df <- df %>%
-        dplyr::filter(ISOTOPE == isotope & SPIKED_VALUE != 0)
+        dplyr::filter(analyte == select_analyte & spike_value != 0)
 
-    df$TAT <- as.numeric(df$Result - df$dtmReceiveDate)
+    df$tat <- as.numeric(df$result_date - df$submission_date)
 
-    # df[which(df$TAT<0),] #troubleshooting
+    # df[which(df$tat<0),] #troubleshooting
 
-    if (any(is.na(df$TAT))) {
+    if (any(is.na(df$tat))) {
         broken <- df %>%
-            dplyr::filter(is.na(df$TAT)) %>%
-            dplyr::select(SAMPLE_ID) %>%
-            as.numeric(.)
+            dplyr::filter(is.na(df$tat)) %>%
+            dplyr::select(sample_ID)
         cat(paste0("ID's with date not being read: ", broken))
+
         df <- df %>%
-            dplyr::filter(SAMPLE_ID != broken)
+            dplyr::filter(!is.na(tat))
     }
 
-    if (any(df$TAT < 0)) {
+    if (any(df$tat < 0)) {
         broken <- df %>%
-            dplyr::filter(df$TAT < 0) %>%
-            dplyr::select(SAMPLE_ID) %>%
-            as.numeric(.)
-        cat(paste0("ID's with negative TAT's: ", broken))
+            dplyr::filter(df$tat < 0) %>%
+            dplyr::select(sample_ID)
+
+        cat(paste0("ID's with negative tat's: ", broken))
         df <- df %>%
-            dplyr::filter(SAMPLE_ID != broken)
+            dplyr::filter(sample_ID != broken)
     }
 
 
-    df$late <- df$TAT > target_days
+    df$late <- df$tat > target_days
     lates <- sum(df$late)
-    late_pct <- 100 * lates/length(df$TAT)
+    late_pct <- 100 * lates/length(df$tat)
 
     # troubleshooting readr::write_tsv(df, 'ts.tsv')
 
-    ggplot2::ggplot(df, ggplot2::aes(dtmReceiveDate, TAT, color = late)) + ggplot2::scale_colour_manual(values = c("black",
-        "red")) + ggplot2::xlim(xlims) + ggplot2::geom_point(shape = 1) + ggplot2::geom_segment(ggplot2::aes(xend = dtmReceiveDate,
-        yend = 0)) + ggplot2::xlab("receipt date") + ggplot2::ylab("turnaround, days") +
-        ggplot2::ggtitle(paste0("Percent ", isotope, " > ", target_days, " days = ",
-            signif(late_pct, 3), "%"), subtitle = paste0("Number ", isotope, " > ",
-            target_days, " days = ", signif(lates, 3)))
+    ggplot2::ggplot(df,
+            ggplot2::aes(submission_date, tat, color = late)) +
+    ggplot2::scale_colour_manual(values = c("black", "red")) +
+    ggplot2::geom_point(shape = 1) +
+    ggplot2::geom_segment(ggplot2::aes(xend = submission_date,
+        yend = 0)) +
+      ggplot2::xlab("receipt date") +
+      ggplot2::ylab("turnaround, days") +
+      ggplot2::ggtitle(paste0("Percent ",
+                      select_analyte, " > ",
+                      target_days,
+                      " days = ",
+                      signif(late_pct, 3), "%"),
+                      subtitle = paste0("Number ",
+            select_analyte, " > ", target_days,
+            " days = ", signif(lates, 3)))
 }
