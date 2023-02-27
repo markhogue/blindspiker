@@ -17,11 +17,11 @@
 #' @export
 spike_combos <- function(analytes, dat = bs_df){
 
-
   # To avoid visible binding note in package check:
+
   analyte <- all_of <- bs_df <- spike_value <- NULL
 
-  # get all spike data from dat
+      # get all spike data from dat
   # selected columns are sample_ID, analyte, and spike_value
   spikes <- dat[dat$spike_value > 0, 1:3]
 
