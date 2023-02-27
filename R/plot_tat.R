@@ -11,7 +11,7 @@
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
-#' plot_tat(select_analyte = 'unknownium', df = example_df, target_days = 60)
+#' plot_tat(select_analyte = 'unknownium', dat = example_df, target_days = 60)
 #'
 #' @export
 plot_tat <- function(select_analyte, dat = bs_df, target_days = 60) {
