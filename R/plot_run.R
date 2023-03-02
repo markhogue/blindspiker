@@ -40,6 +40,9 @@ plot_run <- function(select_analyte,
     if(!version %in% c("ratio", "original"))
       version <- "original"
 
+
+# not ratio -- "original" -------------------------------------------------
+
     if(version == "original"){
 
     df2 <- dat %>%
@@ -62,7 +65,7 @@ plot_run <- function(select_analyte,
           TRUE ~ result)) %>%
 
       dplyr::mutate(
-        up_res = dplyr::case_when(
+        high_res = dplyr::case_when(
           result > det_lvl ~
             result + (unc * 2 / k),
           TRUE ~ result)) %>%
