@@ -3,8 +3,9 @@
 #' @description
 #' `plot_run()` produces a Run Chart of the selected analyte. The analyte
 #' is selected from the analyte set provided. Results are plotted with error
-#' bars (uncertainty with coverage factor of 2). When original results are
-#' plotted, the spike values are shown with a small salmon-colored "+".
+#' bars (uncertainty with coverage factor of 2) when the result is greater than
+#' the detection level. When original results are plotted, the spike values are
+#' shown with a small salmon-colored "+".
 #'
 #' @param select_analyte the selected analyte for this run chart
 #' @param dat data frame with all data needed as described in `get_data`.
@@ -53,13 +54,21 @@ plot_run <- function(select_analyte,
 
     df2 <- df2 %>%
       dplyr::filter(result > 0) %>%
+
       dplyr::mutate(
-        low_res = result - unc * 2 / k) %>%
+        low_res = dplyr::case_when(
+          result > det_lvl ~
+            result - (unc * 2 / k),
+          TRUE ~ result)) %>%
+
       dplyr::mutate(
-        high_res = result + unc * 2 / k) %>%
+        up_res = dplyr::case_when(
+          result > det_lvl ~
+            result + (unc * 2 / k),
+          TRUE ~ result)) %>%
        dplyr::mutate(spike_overlap =
-                      as.factor(
-                        dplyr::case_when(low_res > spike_value ~ 1,
+        as.factor(
+        dplyr::case_when(low_res > spike_value ~ 1,
                                          high_res < spike_value ~1,
                                          TRUE ~ 0)))
 
@@ -72,12 +81,12 @@ plot_run <- function(select_analyte,
                         color = spike_overlap)) +
      ggplot2::geom_point(shape = 1) +
      ggplot2::geom_linerange(data = df2,
-                                ggplot2::aes(x= sample_ID,
-                                             ymin = low_res,
-                                             ymax = high_res,
-                                             color = spike_overlap),
-                                linewidth = 0.5,
-                                show.legend = FALSE) +
+     ggplot2::aes(x= sample_ID,
+                    ymin = low_res,
+                    ymax = high_res,
+                    color = spike_overlap),
+                    linewidth = 0.5,
+                     show.legend = FALSE) +
      ggplot2::geom_point(ggplot2::aes(sample_ID, spike_value),
                          shape = 3,
                          size = 0.8,
@@ -116,10 +125,19 @@ if(version == "ratio"){
   df <- df %>%
     dplyr::filter(result > 0) %>%
     dplyr::mutate(res_to_spike_ratio = result/spike_value) %>%
+
+      dplyr::mutate(
+      low_rat = dplyr::case_when(
+        result > det_lvl ~
+        result - (unc * 2 / k)  / spike_value,
+        TRUE ~ result)) %>%
+
     dplyr::mutate(
-      low_rat = res_to_spike_ratio - unc * 2 / k / result) %>%
-    dplyr::mutate(
-      up_rat = res_to_spike_ratio + unc * 2 / k / result) %>%
+      up_rat = dplyr::case_when(
+        result > det_lvl ~
+        result + (unc * 2 / k)  / spike_value,
+        TRUE ~ result)) %>%
+
     dplyr::mutate(spike_overlap =
                     as.factor(
                       dplyr::case_when(up_rat < 1 ~ 1,
@@ -127,8 +145,6 @@ if(version == "ratio"){
                                        TRUE ~ 0)
                     )
     )
-  print.data.frame(df)
-
 
   df$low_rat[is.nan(df$lower)] <- 0
   df$up_rat[is.nan(df$upper)] <- 0

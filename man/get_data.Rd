@@ -10,17 +10,11 @@ get_data(spike_data, lab_data)
 \arguments{
 \item{spike_data}{name of the file, with path, containing the spike values.
 Example form, "C:/my_directory/my_spike_data.csv".
-This file should contain column headings identified above and may contain
-additional data identified above. If your file has different column names,
-you will have to identify them in the plotting and data analysis function
-parameters. This parameter is required, with no default.}
+This file column headings must be as identified in the Details section.}
 
 \item{lab_data}{name of the file, with path, containing the laboratory
 results. Example form, "C:/my_directory/my_lab_data.csv".
-#' This file should contain column headings identified above and may contain
-additional data identified above. If your file has different column names,
-you will have to identify them in the plotting and data analysis function
-parameters. This parameter is required, with no default.}
+This file column headings must be as identified in the Details section.}
 }
 \value{
 data frame containing all needed data to be used in subsequent
@@ -42,27 +36,33 @@ To use this function, first set up spike value data in a .csv file
 (in any column order) matching the column headers of the following values:
 
 Required for spike data:
-`sample_ID` unique identifier, character or numeric
-`analyte` character data
-`spike_value` numeric value
-`spike_units` character data
-`submission_date` character data that will be converted to date in format
+\itemize{
+\item `sample_ID` unique identifier, character or numeric
+\item `analyte` character data
+\item `spike_value` numeric value
+\item `spike_units` character data
+\item `submission_date` character data that will be converted to date in format
  YYYY-MM-DD (for example 1999-12-31)
+ }
 
 Optional for spike data:
-`sv_unc` numeric, the uncertainty of the spike value
-`sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
-`provider lab` character name of laboratory providing spiked samples
+\itemize{
+\item `sv_unc` numeric, the uncertainty of the spike value
+\item `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+\item `provider lab` character name of laboratory providing spiked samples
+}
 
 Required for laboratory results:
-`sample_ID` must match spike `sample_ID`
-`analyte` must match spike `analyte`
-`result` numeric value
-`units` must match `spike_units`
-`result_date`
-`det_lvl` numeric detection level
-`unc` numeric uncertainty of the laboratory result
-`k` the coverage factor for the result uncertainty (typically 1 or 2)
+\itemize{
+\item `sample_ID` must match spike `sample_ID`
+\item `analyte` must match spike `analyte`
+\item `result` numeric value
+\item `units` must match `spike_units`
+\item `result_date`
+\item `det_lvl` numeric detection level
+\item `unc` numeric uncertainty of the laboratory result
+\item `k` the coverage factor for the result uncertainty (typically 1 or 2)
+}
 
 Note that the two data sets (spike values and laboratory results) will
 be combined by `sample_ID`, and also by `analyte` if present in both sets.

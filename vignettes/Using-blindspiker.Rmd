@@ -19,9 +19,34 @@ library(blindspiker)
 
 The R package, `blindspiker`, was initially developed for the  Internal Dosimetry program at the Savannah River Site, based on an R script, "SRS Blind Spikes-4.R", written by Tom Labone. 
 
-The first step in using the package is to **load your data.** This is made easy **with the `get_data` ** function. This function reads in data directly from .csv files. See the help for `get_data` (`?get_data`) for the necessary columns.
+The first step in using the package is to **load your data.** This is made easy **with the `get_data` ** function. This function reads in data directly from .csv files. 
 
-To summarize the spike values provided to the laboratory,
+Data must be supplied with column names indicated below:
+
+Spike values must be in a comma separated variable file with the following column headers:
+
+* sample_ID = unique identifier for the sample
+* analyte = name of analyte in the sample
+* spike_value = quantity of the analyte
+* spike_unit = unit of measurement for the spike value
+* provider_lab = for the spiked samples (optional, not currently used for any function)
+* submission_date = date the sample was delivered to the laboratory in format yyyy-mm-dd (optional, not currently used, but user could consider it for later analysis of results in the combined data)
+* sv_u = uncertainty in the spike value (optional, not currently used, as spike values are assumed to be at low uncertainty compared to laboratory results)
+* sv_k = coverage factor for the spike value uncertainty (optional)
+
+
+Laboratory values must be in a comma separated variable file with the following column headers:
+
+* sample_ID = unique identifier for the sample - must match spike data
+* analyte = name of analyte in the sample - must match spike data
+* result_date = date the sample was reported in format yyyy-mm-dd
+* k = coverage factor for the laboratory's uncertainty of the result
+* result = analysis result
+* unc = analysis uncertainty in same units as result
+* units = laboratory units - must match spike value units
+* det_lvl = laboratory's detection level
+      
+Spike values provided to the laboratory may be summarized with the following functions:
 
 **`table_spike` summarizes all individual spike values** and
 

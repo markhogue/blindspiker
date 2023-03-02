@@ -15,27 +15,33 @@
 #' (in any column order) matching the column headers of the following values:
 #'
 #' Required for spike data:
-#' `sample_ID` unique identifier, character or numeric
-#' `analyte` character data
-#' `spike_value` numeric value
-#' `spike_units` character data
-#' `submission_date` character data that will be converted to date in format
+#' \itemize{
+#' \item `sample_ID` unique identifier, character or numeric
+#' \item `analyte` character data
+#' \item `spike_value` numeric value
+#' \item `spike_units` character data
+#' \item `submission_date` character data that will be converted to date in format
 #'  YYYY-MM-DD (for example 1999-12-31)
+#'  }
 #'
 #' Optional for spike data:
-#' `sv_unc` numeric, the uncertainty of the spike value
-#' `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
-#' `provider lab` character name of laboratory providing spiked samples
+#' \itemize{
+#' \item `sv_unc` numeric, the uncertainty of the spike value
+#' \item `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+#' \item `provider lab` character name of laboratory providing spiked samples
+#'}
 #'
 #' Required for laboratory results:
-#' `sample_ID` must match spike `sample_ID`
-#' `analyte` must match spike `analyte`
-#' `result` numeric value
-#' `units` must match `spike_units`
-#' `result_date`
-#' `det_lvl` numeric detection level
-#' `unc` numeric uncertainty of the laboratory result
-#' `k` the coverage factor for the result uncertainty (typically 1 or 2)
+#' \itemize{
+#' \item `sample_ID` must match spike `sample_ID`
+#' \item `analyte` must match spike `analyte`
+#' \item `result` numeric value
+#' \item `units` must match `spike_units`
+#' \item `result_date`
+#' \item `det_lvl` numeric detection level
+#' \item `unc` numeric uncertainty of the laboratory result
+#' \item `k` the coverage factor for the result uncertainty (typically 1 or 2)
+#'}
 #'
 #' Note that the two data sets (spike values and laboratory results) will
 #' be combined by `sample_ID`, and also by `analyte` if present in both sets.
@@ -48,17 +54,11 @@
 #'
 #' @param spike_data name of the file, with path, containing the spike values.
 #' Example form, "C:/my_directory/my_spike_data.csv".
-#' This file should contain column headings identified above and may contain
-#' additional data identified above. If your file has different column names,
-#' you will have to identify them in the plotting and data analysis function
-#' parameters. This parameter is required, with no default.
+#' This file column headings must be as identified in the Details section.
 #'
 #' @param lab_data name of the file, with path, containing the laboratory
 #' results. Example form, "C:/my_directory/my_lab_data.csv".
-#' #' This file should contain column headings identified above and may contain
-#' additional data identified above. If your file has different column names,
-#' you will have to identify them in the plotting and data analysis function
-#' parameters. This parameter is required, with no default.
+#' This file column headings must be as identified in the Details section.
 #'
 #' @return data frame containing all needed data to be used in subsequent
 #' functions.
@@ -84,8 +84,61 @@ get_data <- function(spike_data,
       # read spike data
     spike_df <- utils::read.csv(file = spike_data)
 
+    # check spike data names
+    spike_names_check <- names(spike_df) %in% c(
+      "sample_ID",
+      "analyte",
+      "spike_value",
+      "sv_u",
+      "sv_k",
+      "spike_unit",
+      "provider_lab",
+      "submission_date"
+    )
+
+    if(!all(spike_names_check) == TRUE) {
+      cat("Column names in spike data do not all match, \n")
+      cat("Spike data names are: \n")
+      print(names(spike_df))
+      cat("\n")
+      cat("Allowed names are: \n")
+      print(c("sample_ID",
+        "analyte",
+        "spike_value",
+        "sv_u",
+        "sv_k",
+        "spike_unit",
+        "provider_lab",
+        "submission_date"
+      ))
+      cat("\n")
+      cat("This name was unrecognized: \n")
+      print(names(spike_df)[which(spike_names_check == F)])
+      stopifnot(all(spike_names_check) == TRUE)
+      }
+
+
     # read lab data
     lab_df <- utils::read.csv(file = lab_data)
+
+    # check lab data names
+    lab_names_check <- names(lab_df) %in% c(
+      "sample_ID", "analyte", "result_date", "k",
+      "result", "unc", "units", "det_lvl")
+
+    if(!all(lab_names_check) == TRUE) {
+      cat("Column names in laboratory data do not all match, \n")
+      cat("Laboratory data names are: \n")
+      print(names(lab_df))
+      cat("\n")
+      cat("Allowed names are: \n")
+      print(c("sample_ID", "analyte", "result_date", "k",
+              "result", "unc", "units", "det_lvl"))
+      cat("\n")
+      cat("This name was unrecognized: \n")
+      print(names(lab_df)[which(lab_names_check == F)])
+      stopifnot(all(lab_names_check) == TRUE)
+    }
 
     # check for analyte match
     # if not spiked, it probably shouldn't be in lab data
@@ -108,6 +161,14 @@ get_data <- function(spike_data,
     bs_df <-
         dplyr::full_join(spike_df,lab_df,
                           by = c("sample_ID", "analyte"))
+
+    # check for duplicates
+    dup_check <- duplicated(data.frame(bs_df$sample_ID, bs_df$analyte))
+    if(any(dup_check == TRUE)) {
+      cat(paste0("sample_ID ", bs_df$sample_ID[which(dup_check == TRUE)],
+                  " is a duplicate"))
+    stopifnot("Duplicated sample_ID for same analyte" = all(dup_check == FALSE))
+    }
 
     # this allows for evenly-spaced plots
     bs_df$sample_ID <- as.character(bs_df$sample_ID)

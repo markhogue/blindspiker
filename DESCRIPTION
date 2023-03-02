@@ -1,6 +1,6 @@
 Package: blindspiker
 Title: LABORATORY BLIND SPIKE SAMPLE ANALYSES
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "Mark",
            family = "Hogue",

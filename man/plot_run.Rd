@@ -29,8 +29,9 @@ is 'sample'.}
 \description{
 `plot_run()` produces a Run Chart of the selected analyte. The analyte
 is selected from the analyte set provided. Results are plotted with error
-bars (uncertainty with coverage factor of 2). When original results are
-plotted, the spike values are shown with a small salmon-colored "+".
+bars (uncertainty with coverage factor of 2) when the result is greater than
+the detection level. When original results are plotted, the spike values are
+shown with a small salmon-colored "+".
 }
 \examples{
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
