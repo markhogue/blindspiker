@@ -74,30 +74,56 @@ table_false <- function(select_analyte,
         dplyr::count(.) %>%
         as.numeric()
 
+      # Provide default NA's for f_pos, f_neg, and f_all
+  f_pos <- list("conf.int" = c(NA, NA),
+                "estimate" = NA,
+                "method" = NA,
+                "conf.level" = NA,
+                "alternative" = NA)
+
+  f_neg <- list("conf.int" = c(NA, NA),
+                "estimate" = NA,
+                "method" = NA,
+                "conf.level" = NA,
+                "alternative" = NA)
+
+  f_all <- list("conf.int" = c(NA, NA),
+                "estimate" = NA,
+                "method" = NA,
+                "conf.level" = NA,
+                "alternative" = NA)
+
       # false positive rate
-  f_pos <-
+  f_pos <- if(n_false_pos > 0) {
     binGroup::binCI(
     n = n_false_pos + n_true_neg,
     y = n_false_pos,
     conf.level = 0.95,
     alternative = "two.sided",
     method = "CP")
+    }
 
     # false negative rate
-  f_neg <-
+  f_neg <- if(n_false_neg > 0){
     binGroup::binCI(
       n = length(df$sample_ID),
       y = n_false_neg,
       conf.level = 0.95,
       alternative = "two.sided",
       method = "CP")
+    }
 
   # total error rate
-  f_all <- binGroup::binCI(n = n_lab_results,
+  f_all <- if(n_err_free > 0){
+    binGroup::binCI(n = n_lab_results,
                            y = n_lab_results - n_err_free, #either error
                            conf.level = 0.95,
                            alternative = "two.sided",
                            method = "CP")
+  }
+
+  # Resume editing here
+  # Need to figure out a way to fill table with NA's
 
 f_tbl <- data.frame("error_type" =
                   c("false postive", "false negative", "either_error"),
