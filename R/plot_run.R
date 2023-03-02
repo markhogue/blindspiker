@@ -32,7 +32,7 @@ plot_run <- function(select_analyte,
   {
 
   analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
-  high_res <- low_rat <- up_rat <- bs_df <- spike_overlap <- spike_value <-
+  high_res <- low_rat <- high_rat <- bs_df <- spike_overlap <- spike_value <-
   k <-  NULL
 
   # If matrix option is changed, but 'original' is misspelled or missing,
@@ -132,25 +132,25 @@ if(version == "ratio"){
       dplyr::mutate(
       low_rat = dplyr::case_when(
         result > det_lvl ~
-        result - (unc * 2 / k)  / spike_value,
+        (result - (unc * 2 / k))  / spike_value,
         TRUE ~ result)) %>%
 
     dplyr::mutate(
-      up_rat = dplyr::case_when(
+      high_rat = dplyr::case_when(
         result > det_lvl ~
-        result + (unc * 2 / k)  / spike_value,
+        (result + (unc * 2 / k))  / spike_value,
         TRUE ~ result)) %>%
 
     dplyr::mutate(spike_overlap =
                     as.factor(
-                      dplyr::case_when(up_rat < 1 ~ 1,
+                      dplyr::case_when(high_rat < 1 ~ 1,
                                        low_rat > 1 ~1,
                                        TRUE ~ 0)
                     )
     )
 
   df$low_rat[is.nan(df$lower)] <- 0
-  df$up_rat[is.nan(df$upper)] <- 0
+  df$high_rat[is.nan(df$upper)] <- 0
 
   df <- df[order(df$result_date), ]
   date_range <- (range(df$result_date))
@@ -162,7 +162,7 @@ p <- ggplot2::ggplot(data = df,
     ggplot2::geom_point(shape = 1) +
     ggplot2::geom_linerange(ggplot2::aes(x = sample_ID,
                                        ymin = low_rat,
-                                       ymax = up_rat,
+                                       ymax = high_rat,
                                        color = spike_overlap),
                           linewidth = 0.5,
                           show.legend = FALSE) +
