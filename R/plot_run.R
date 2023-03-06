@@ -4,8 +4,10 @@
 #' `plot_run()` produces a Run Chart of the selected analyte. The analyte
 #' is selected from the analyte set provided. Results are plotted with error
 #' bars (uncertainty with coverage factor of 2) when the result is greater than
-#' the detection level. When original results are plotted, the spike values are
-#' shown with a small salmon-colored "+". Ratio plots have a range of 0 to 2.
+#' the detection level. On the ratio version, the uncertainties for the results
+#' and spike values are combined as the square root of the sums of the relative
+#' uncertainties squared. When original results are plotted, the spike values
+#' are shown with a small salmon-colored "+".
 #'
 #' @param select_analyte the selected analyte for this run chart
 #' @param dat data frame with all data needed as described in `get_data`.
@@ -31,7 +33,7 @@ plot_run <- function(select_analyte,
 
   analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
   high_res <- low_rat <- high_rat <- bs_df <- spike_overlap <- spike_value <-
-  k <-  low_spike <- high_spike <- NULL
+  sv_unc <- k <-  low_spike <- high_spike <- NULL
 
   # If version option is changed, but 'original' is misspelled or missing,
   # change to 'original'
@@ -73,10 +75,10 @@ plot_run <- function(select_analyte,
 
       # spike range
     dplyr::mutate(
-      low_spike = spike_value - (sv_unc * 2 / k)) %>%
+      low_spike = spike_value - (sv_unc * 2 / sv_k)) %>%
 
       dplyr::mutate(
-        high_spike = spike_value + (sv_unc * 2 / k)) %>%
+        high_spike = spike_value + (sv_unc * 2 / sv_k)) %>%
 
       dplyr::mutate(spike_overlap =
           as.factor(
@@ -128,6 +130,7 @@ if(version == "ratio"){
     dplyr::filter(analyte == select_analyte) %>%
     dplyr::filter(spike_value > 0)
 
+
   unit_txt <- df$units[1]
   # remove results = 0
   if(length(df$sample_ID[df$result <= 0]) > 0) {
@@ -139,16 +142,27 @@ if(version == "ratio"){
     dplyr::filter(result > 0) %>%
     dplyr::mutate(res_to_spike_ratio = result/spike_value) %>%
 
+    # relative uncertainty of the ratio
+    # - square root sum of the squares of the relative uncertainty
+    # of the lab result and the spike value
+    dplyr::mutate(rat_unc =
+          sqrt(
+            ((df$unc * 2 / k) /
+               result)^2) +
+            ((df$sv_unc * 2 / df$sv_k) /
+               spike_value)^2
+           ) %>%
+
       dplyr::mutate(
       low_rat = dplyr::case_when(
         result > det_lvl ~
-        (result - (unc * 2 / k))  / spike_value,
+        (result - (rat_unc * 2 / k)),
         TRUE ~ res_to_spike_ratio)) %>%
 
     dplyr::mutate(
       high_rat = dplyr::case_when(
         result > det_lvl ~
-        (result + (unc * 2 / k))  / spike_value,
+        (result + (rat_unc * 2 / k)),
         TRUE ~ res_to_spike_ratio)) %>%
 
     dplyr::mutate(spike_overlap =
