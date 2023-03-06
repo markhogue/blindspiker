@@ -35,6 +35,7 @@ plot_run <- function(select_analyte,
   high_res <- low_rat <- high_rat <- bs_df <- spike_overlap <- spike_value <-
   sv_unc <- k <- sv_k <-  low_spike <- high_spike <- NULL
 
+
   # If version option is changed, but 'original' is misspelled or missing,
   # change to 'original'
     if(!version %in% c("ratio", "original"))
