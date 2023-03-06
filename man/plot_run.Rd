@@ -4,13 +4,7 @@
 \alias{plot_run}
 \title{Plot Run Chart}
 \usage{
-plot_run(
-  select_analyte,
-  dat = bs_df,
-  version = "ratio",
-  matrix = "sample",
-  log = "n"
-)
+plot_run(select_analyte, dat = bs_df, version = "ratio", log = "n")
 }
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
@@ -18,20 +12,18 @@ plot_run(
 \item{dat}{data frame with all data needed as described in `get_data`.
 Default is `bs_df`.}
 
-\item{version}{The run chart is either shown with `original` units, default, or
-with the result shown as a `ratio` to the spike value.}
+\item{version}{The run chart is either shown with `original` units, default,
+or with the result shown as a `ratio` to the spike value.}
 
-\item{matrix}{what the analyte is suspended in. For example, 'water'. Default
-is 'sample'.}
-
-\item{log}{Set log = "y" to make the y-axis a log scale. Default is "n".}
+\item{log}{Set log = "y" to make the y-axis a log scale - original version
+only. Default is "n".}
 }
 \description{
 `plot_run()` produces a Run Chart of the selected analyte. The analyte
 is selected from the analyte set provided. Results are plotted with error
 bars (uncertainty with coverage factor of 2) when the result is greater than
 the detection level. When original results are plotted, the spike values are
-shown with a small salmon-colored "+".
+shown with a small salmon-colored "+". Ratio plots have a range of 0 to 2.
 }
 \examples{
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')

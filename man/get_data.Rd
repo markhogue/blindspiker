@@ -47,8 +47,8 @@ Required for spike data:
 
 Optional for spike data:
 \itemize{
-\item `sv_unc` numeric, the uncertainty of the spike value
-\item `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+\item `sv_unc` numeric, the uncertainty of the spike value. Default = 0
+\item `sv_k` the coverage factor for the spike value uncertainty. Default = 2
 \item `provider lab` character name of laboratory providing spiked samples
 }
 
@@ -61,9 +61,12 @@ Required for laboratory results:
 \item `result_date`
 \item `det_lvl` numeric detection level
 \item `unc` numeric uncertainty of the laboratory result
-\item `k` the coverage factor for the result uncertainty (typically 1 or 2)
 }
 
+#' Optional for lab data:
+\itemize{
+\item `k` the coverage factor for the result uncertainty. Default = 2
+}
 Note that the two data sets (spike values and laboratory results) will
 be combined by `sample_ID`, and also by `analyte` if present in both sets.
 (If the laboratory data includes a non-zero result for an analyte not
