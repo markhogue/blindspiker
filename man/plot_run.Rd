@@ -22,8 +22,10 @@ only. Default is "n".}
 `plot_run()` produces a Run Chart of the selected analyte. The analyte
 is selected from the analyte set provided. Results are plotted with error
 bars (uncertainty with coverage factor of 2) when the result is greater than
-the detection level. When original results are plotted, the spike values are
-shown with a small salmon-colored "+". Ratio plots have a range of 0 to 2.
+the detection level. On the ratio version, the uncertainties for the results
+and spike values are combined as the square root of the sums of the relative
+uncertainties squared. When original results are plotted, the spike values
+are shown with a small salmon-colored "+".
 }
 \examples{
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
