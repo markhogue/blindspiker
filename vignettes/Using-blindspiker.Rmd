@@ -29,10 +29,10 @@ Spike values must be in a comma separated variable file with the following colum
 * analyte = name of analyte in the sample
 * spike_value = quantity of the analyte
 * spike_unit = unit of measurement for the spike value
-* provider_lab = for the spiked samples (optional, not currently used for any function)
+* provider_lab = for the spiked samples - Optional, not currently used for any function
 * submission_date = date the sample was delivered to the laboratory in format yyyy-mm-dd (optional, not currently used, but user could consider it for later analysis of results in the combined data)
-* sv_u = uncertainty in the spike value (optional, not currently used, as spike values are assumed to be at low uncertainty compared to laboratory results)
-* sv_k = coverage factor for the spike value uncertainty (optional)
+* sv_unc = uncertainty in the spike value - Optional, default = 0
+* sv_k = coverage factor for the spike value uncertainty - Optional, default = 2
 
 
 Laboratory values must be in a comma separated variable file with the following column headers:
@@ -40,7 +40,7 @@ Laboratory values must be in a comma separated variable file with the following 
 * sample_ID = unique identifier for the sample - must match spike data
 * analyte = name of analyte in the sample - must match spike data
 * result_date = date the sample was reported in format yyyy-mm-dd
-* k = coverage factor for the laboratory's uncertainty of the result
+* k = coverage factor for the laboratory's uncertainty of the result - Optional, default = 2
 * result = analysis result
 * unc = analysis uncertainty in same units as result
 * units = laboratory units - must match spike value units

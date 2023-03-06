@@ -1,4 +1,4 @@
-sample_ID,analyte,spike_value,sv_u,sv_k,spike_unit,provider_lab,submission_date
+sample_ID,analyte,spike_value,sv_unc,sv_k,spike_unit,provider_lab,submission_date
 235824,asphodel,10.53,0.012,2,mblatt,lighthouse,2021-10-08
 236267,asphodel,12.11,0.012,2,mblatt,acme_analytes,2021-10-14
 236267,unknownium,3.16,0.03,2,ppm,acme_analytes,2021-10-14

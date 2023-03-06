@@ -35,6 +35,11 @@ table_false <- function(select_analyte,
   # To avoid visible binding note in package check:
   result <- err_type <- det_lvl <- analyte <- bs_df <- `.` <- NULL
 
+  my_analytes <- unique(dat$analyte)
+
+  stopifnot("Argument, select_analyte, is not in the data set." =
+            select_analyte %in% my_analytes)
+
   df <- dat %>% dplyr::filter(analyte == select_analyte)
 
   # false postive
@@ -75,23 +80,14 @@ table_false <- function(select_analyte,
         as.numeric()
 
       # Provide default NA's for f_pos, f_neg, and f_all
-  f_pos <- list("conf.int" = c(NA, NA),
-                "estimate" = NA,
-                "method" = NA,
-                "conf.level" = NA,
-                "alternative" = NA)
-
-  f_neg <- list("conf.int" = c(NA, NA),
-                "estimate" = NA,
-                "method" = NA,
-                "conf.level" = NA,
-                "alternative" = NA)
-
-  f_all <- list("conf.int" = c(NA, NA),
-                "estimate" = NA,
-                "method" = NA,
-                "conf.level" = NA,
-                "alternative" = NA)
+      # This was dput from example binCI, and NA's inserted
+  f_pos <- f_neg <- f_all <- structure(list(conf.int =
+                                    c(NA, NA),
+                                    estimate = NA,
+                                    method = NA,
+                                    conf.level = NA,
+                                    alternative = NA),
+                                    class = "binCI")
 
       # false positive rate
   f_pos <- if(n_false_pos > 0) {

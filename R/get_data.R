@@ -26,8 +26,8 @@
 #'
 #' Optional for spike data:
 #' \itemize{
-#' \item `sv_unc` numeric, the uncertainty of the spike value
-#' \item `sv_k` the coverage factor for the spike value uncertainty (typically 1 or 2)
+#' \item `sv_unc` numeric, the uncertainty of the spike value. Default = 0
+#' \item `sv_k` the coverage factor for the spike value uncertainty. Default = 2
 #' \item `provider lab` character name of laboratory providing spiked samples
 #'}
 #'
@@ -40,9 +40,12 @@
 #' \item `result_date`
 #' \item `det_lvl` numeric detection level
 #' \item `unc` numeric uncertainty of the laboratory result
-#' \item `k` the coverage factor for the result uncertainty (typically 1 or 2)
 #'}
 #'
+#'#' Optional for lab data:
+#' \itemize{
+#' \item `k` the coverage factor for the result uncertainty. Default = 2
+#'}
 #' Note that the two data sets (spike values and laboratory results) will
 #' be combined by `sample_ID`, and also by `analyte` if present in both sets.
 #' (If the laboratory data includes a non-zero result for an analyte not
@@ -89,7 +92,7 @@ get_data <- function(spike_data,
       "sample_ID",
       "analyte",
       "spike_value",
-      "sv_u",
+      "sv_unc",
       "sv_k",
       "spike_unit",
       "provider_lab",
@@ -105,7 +108,7 @@ get_data <- function(spike_data,
       print(c("sample_ID",
         "analyte",
         "spike_value",
-        "sv_u",
+        "sv_unc",
         "sv_k",
         "spike_unit",
         "provider_lab",
@@ -117,6 +120,9 @@ get_data <- function(spike_data,
       stopifnot(all(spike_names_check) == TRUE)
       }
 
+    # if no uncertainties given for spike values, make them zero
+    if(is.null(spike_df$sv_unc)) spike_df$sv_unc <- 0
+    if(is.null(spike_df$sv_k)) spike_df$sv_k <- 2
 
     # read lab data
     lab_df <- utils::read.csv(file = lab_data)
@@ -139,6 +145,9 @@ get_data <- function(spike_data,
       print(names(lab_df)[which(lab_names_check == F)])
       stopifnot(all(lab_names_check) == TRUE)
     }
+
+    # if no coverage factor given for lab results, make them 2
+    if(is.null(lab_df$k)) lab_df$k <- 2
 
     # check for analyte match
     # if not spiked, it probably shouldn't be in lab data

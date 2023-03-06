@@ -5,16 +5,15 @@
 #' is selected from the analyte set provided. Results are plotted with error
 #' bars (uncertainty with coverage factor of 2) when the result is greater than
 #' the detection level. When original results are plotted, the spike values are
-#' shown with a small salmon-colored "+".
+#' shown with a small salmon-colored "+". Ratio plots have a range of 0 to 2.
 #'
 #' @param select_analyte the selected analyte for this run chart
 #' @param dat data frame with all data needed as described in `get_data`.
 #' Default is `bs_df`.
-#' @param matrix what the analyte is suspended in. For example, 'water'. Default
-#' is 'sample'.
-#' @param version The run chart is either shown with `original` units, default, or
-#' with the result shown as a `ratio` to the spike value.
-#' @param log Set log = "y" to make the y-axis a log scale. Default is "n".
+#' @param version The run chart is either shown with `original` units, default,
+#' or with the result shown as a `ratio` to the spike value.
+#' @param log Set log = "y" to make the y-axis a log scale - original version
+#' only. Default is "n".
 #'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
@@ -27,15 +26,14 @@
 plot_run <- function(select_analyte,
                      dat = bs_df,
                      version = "ratio",
-                     matrix = "sample",
                      log = "n")
   {
 
   analyte <- result <- unc <- sample_ID <- res_to_spike_ratio <- low_res <-
   high_res <- low_rat <- high_rat <- bs_df <- spike_overlap <- spike_value <-
-  k <-  NULL
+  k <-  low_spike <- high_spike <- NULL
 
-  # If matrix option is changed, but 'original' is misspelled or missing,
+  # If version option is changed, but 'original' is misspelled or missing,
   # change to 'original'
     if(!version %in% c("ratio", "original"))
       version <- "original"
@@ -46,7 +44,7 @@ plot_run <- function(select_analyte,
     if(version == "original"){
 
     df2 <- dat %>%
-      # keep only spiked values
+      # kee <-  only spiked values
       dplyr::filter(analyte == select_analyte)
     unit_txt <- df2$units[1]
     # remove results = 0
@@ -58,6 +56,9 @@ plot_run <- function(select_analyte,
     df2 <- df2 %>%
       dplyr::filter(result > 0) %>%
 
+      # range computation - only if result above detection level
+
+      # lab range
       dplyr::mutate(
         low_res = dplyr::case_when(
           result > det_lvl ~
@@ -69,22 +70,30 @@ plot_run <- function(select_analyte,
           result > det_lvl ~
             result + (unc * 2 / k),
           TRUE ~ result)) %>%
-       dplyr::mutate(spike_overlap =
-        as.factor(
-        dplyr::case_when(low_res > spike_value ~ 1,
-                                         high_res < spike_value ~1,
-                                         TRUE ~ 0)))
 
-    df2 <- df2[order(df2$result_date), ]
+      # spike range
+    dplyr::mutate(
+      low_spike = spike_value - (sv_unc * 2 / k)) %>%
+
+      dplyr::mutate(
+        high_spike = spike_value + (sv_unc * 2 / k)) %>%
+
+      dplyr::mutate(spike_overlap =
+          as.factor(
+          dplyr::case_when(low_res > high_spike ~ 1,
+                            high_res < low_spike ~1,
+                            TRUE ~ 0)))
+
+        df2 <- df2[order(df2$result_date), ]
     date_range <- (range(df2$result_date))
 
-    p <- ggplot2::ggplot(data = df2,
+    p2 <- ggplot2::ggplot(data = df2,
             ggplot2::aes(sample_ID,
                         result,
                         color = spike_overlap)) +
      ggplot2::geom_point(shape = 1) +
      ggplot2::geom_linerange(data = df2,
-     ggplot2::aes(x= sample_ID,
+           ggplot2::aes(x= sample_ID,
                     ymin = low_res,
                     ymax = high_res,
                     color = spike_overlap),
@@ -104,7 +113,8 @@ plot_run <- function(select_analyte,
         ggplot2::labs(caption = paste0("result date range ", date_range[1],
                                     " to ", date_range[2]))
 
-   if(log == "y") p <- p + ggplot2::scale_y_log10()
+   if(log == "y") p2 <- p2 + ggplot2::scale_y_log10()
+    p <- p2
     p
     }
 
@@ -133,13 +143,13 @@ if(version == "ratio"){
       low_rat = dplyr::case_when(
         result > det_lvl ~
         (result - (unc * 2 / k))  / spike_value,
-        TRUE ~ result)) %>%
+        TRUE ~ res_to_spike_ratio)) %>%
 
     dplyr::mutate(
       high_rat = dplyr::case_when(
         result > det_lvl ~
         (result + (unc * 2 / k))  / spike_value,
-        TRUE ~ result)) %>%
+        TRUE ~ res_to_spike_ratio)) %>%
 
     dplyr::mutate(spike_overlap =
                     as.factor(
@@ -149,23 +159,23 @@ if(version == "ratio"){
                     )
     )
 
-  df$low_rat[is.nan(df$lower)] <- 0
-  df$high_rat[is.nan(df$upper)] <- 0
+  df$res_to_spike_ratio[is.infinite(df$res_to_spike_ratio)] <-
+  df$low_rat[is.nan(df$low_rat)] <- 0
+  df$high_rat[is.nan(df$high_rat)] <- 0
+  df$high_rat[is.infinite(df$high_rat)] <- NA
 
   df <- df[order(df$result_date), ]
   date_range <- (range(df$result_date))
 
-p <- ggplot2::ggplot(data = df,
+  p0 <- ggplot2::ggplot(data = df,
                      ggplot2::aes(sample_ID,
                                   res_to_spike_ratio,
+                                  ymin = low_rat,
+                                  ymax = high_rat,
                                   color = spike_overlap)) +
+#    ggplot2::ylim(0, 2) +
     ggplot2::geom_point(shape = 1) +
-    ggplot2::geom_linerange(ggplot2::aes(x = sample_ID,
-                                       ymin = low_rat,
-                                       ymax = high_rat,
-                                       color = spike_overlap),
-                          linewidth = 0.5,
-                          show.legend = FALSE) +
+  ggplot2::geom_pointrange()  +
   ggplot2::scale_color_manual(values =  c("black", "red")) +
   ggplot2::geom_hline(yintercept = 1,
                       color = "darksalmon",
@@ -176,11 +186,12 @@ p <- ggplot2::ggplot(data = df,
     ggplot2::xlab("results in report date order") +
     ggplot2::ylab(paste0(select_analyte, " result / spike value")) +
     ggplot2::ggtitle(paste0(select_analyte, " result / spike")) +
-      ggplot2::labs(caption = paste0("result date range ", date_range[1],
+      ggplot2::labs(caption = paste0("result date range ",
+                                     date_range[1],
                                      " to ", date_range[2]))
 
-     if(log == "y") p <- p + ggplot2::scale_y_log10()
-p
+  if(log == "y") cat("log argument ignored for ratio version, \n")
+p <- p0
 }
 p
 }
