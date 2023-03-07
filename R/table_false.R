@@ -90,7 +90,7 @@ table_false <- function(select_analyte,
                                     class = "binCI")
 
       # false positive rate
-  f_pos <- if(n_false_pos > 0) {
+  if(n_false_pos > 0) f_pos <-  {
     binGroup::binCI(
     n = n_false_pos + n_true_neg,
     y = n_false_pos,
@@ -100,7 +100,7 @@ table_false <- function(select_analyte,
     }
 
     # false negative rate
-  f_neg <- if(n_false_neg > 0){
+  if(n_false_neg > 0) f_neg <- {
     binGroup::binCI(
       n = length(df$sample_ID),
       y = n_false_neg,
@@ -110,7 +110,7 @@ table_false <- function(select_analyte,
     }
 
   # total error rate
-  f_all <- if(n_err_free > 0){
+  if(n_err_free > 0) f_all <- {
     binGroup::binCI(n = n_lab_results,
                            y = n_lab_results - n_err_free, #either error
                            conf.level = 0.95,
