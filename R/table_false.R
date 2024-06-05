@@ -31,112 +31,66 @@
 #'
 table_false <- function(select_analyte,
                         dat = bs_df) {
-
-  # To avoid visible binding note in package check:
-  result <- err_type <- det_lvl <- analyte <- bs_df <- `.` <- NULL
-
+  result <- err_type <- det_lvl <- analyte <- bs_df <- . <- NULL
   my_analytes <- unique(dat$analyte)
-
-  stopifnot("Argument, select_analyte, is not in the data set." =
-            select_analyte %in% my_analytes)
-
+  stopifnot(`Argument, select_analyte, is not in the data set.` = select_analyte %in%
+              my_analytes)
   df <- dat %>% dplyr::filter(analyte == select_analyte)
-
-  # false postive
-  # The false positive rate is computed as the number of false positives divided
-  # by the number of false positives and true negatives. True negatives are
-  # computed first
-
-    n_true_neg <- df %>%
-    dplyr::filter(analyte == select_analyte) %>%
-    dplyr::filter(err_type == "no_err_cat") %>%
-    dplyr::filter(result < det_lvl) %>%
-    dplyr::count(.) %>%
-    as.numeric()  #
-
-    n_false_neg <- df %>%
-      dplyr::filter(analyte == select_analyte) %>%
-      dplyr::filter(err_type == "false_neg") %>%
-      dplyr::count(.) %>%
-      as.numeric()  #
-
-      n_false_pos <-  df %>%
-      dplyr::filter(analyte == select_analyte) %>%
-      dplyr::filter(err_type == "false_pos") %>%
-      dplyr::count(.) %>%
-      as.numeric()
-
-      n_lab_results <- df %>%
-      dplyr::filter(analyte == select_analyte) %>%
-      dplyr::filter(!is.na(result)) %>%
-      dplyr::count(.) %>%
-      as.numeric()
-
-      n_err_free <-  df %>%
-        dplyr::filter(analyte == select_analyte) %>%
-        dplyr::filter(!is.na(result)) %>%
-        dplyr::filter(err_type == "no_err_cat") %>%
-        dplyr::count(.) %>%
-        as.numeric()
-
-      # Provide default NA's for f_pos, f_neg, and f_all
-      # This was dput from example binCI, and NA's inserted
-  f_pos <- f_neg <- f_all <- structure(list(conf.int =
-                                    c(NA, NA),
-                                    estimate = NA,
-                                    method = NA,
-                                    conf.level = NA,
-                                    alternative = NA),
-                                    class = "binCI")
-
-      # false positive rate
-  if(n_false_pos > 0) f_pos <-  {
-    binGroup::binCI(
-    n = n_false_pos + n_true_neg,
-    y = n_false_pos,
-    conf.level = 0.95,
-    alternative = "two.sided",
-    method = "CP")
+  n_true_neg <- df %>% dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(err_type == "no_err_cat") %>% dplyr::filter(result <
+                                                                det_lvl) %>% dplyr::count(.) %>% as.numeric()
+  n_false_neg <- df %>% dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(err_type == "false_neg") %>% dplyr::count(.) %>%
+    as.numeric()
+  n_false_pos <- df %>% dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(err_type == "false_pos") %>% dplyr::count(.) %>%
+    as.numeric()
+  n_lab_results <- df %>% dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(!is.na(result)) %>% dplyr::count(.) %>%
+    as.numeric()
+  n_err_free <- df %>% dplyr::filter(analyte == select_analyte) %>%
+    dplyr::filter(!is.na(result)) %>% dplyr::filter(err_type ==
+                                                      "no_err_cat") %>% dplyr::count(.) %>% as.numeric()
+  f_pos <- f_neg <- f_all <- structure(list(conf.int = c(NA,
+                                                         NA), estimate = NA, method = NA, conf.level = NA, alternative = NA),
+                                       class = "binCI")
+  if (n_false_pos > 0)
+    f_pos <- {
+      binGroup::binCI(n = n_false_pos + n_true_neg, y = n_false_pos,
+                      conf.level = 0.95, alternative = "two.sided",
+                      method = "CP")
+    }
+  if (n_false_neg > 0)
+    f_neg <- {
+      binGroup::binCI(n = length(df$sample_ID), y = n_false_neg,
+                      conf.level = 0.95, alternative = "two.sided",
+                      method = "CP")
+    }
+  if (n_err_free > 0)
+    f_all <- {
+      binGroup::binCI(n = n_lab_results, y = n_lab_results -
+                        n_err_free, conf.level = 0.95, alternative = "two.sided",
+                      method = "CP")
     }
 
-    # false negative rate
-  if(n_false_neg > 0) f_neg <- {
-    binGroup::binCI(
-      n = length(df$sample_ID),
-      y = n_false_neg,
-      conf.level = 0.95,
-      alternative = "two.sided",
-      method = "CP")
-    }
+  f_tbl <- data.frame(
+    error_type = c("false postive",
+                   "false negative",
+                   "either_error"),
+    method = c(f_pos$method, f_neg$method, f_all$method),
+    conf_level = c(f_pos$conf.level,
+                   f_neg$conf.level,
+                   f_all$conf.level),
+    alternative = c(f_pos$alternative,
+                    f_neg$alternative,
+                    f_all$alternative),
+    n = c(n_false_pos, n_false_neg, n_false_neg + n_false_pos),
+    cl_min = c(f_pos$conf.int[1], f_neg$conf.int[1], f_all$conf.int[1]),
+    cl_mean = c(f_pos$estimate, f_neg$estimate, f_all$estimate),
+    cl_max = c(f_pos$conf.int[2], f_neg$conf.int[2],
+               f_all$conf.int[2]))
 
-  # total error rate
-  if(n_err_free > 0) f_all <- {
-    binGroup::binCI(n = n_lab_results,
-                           y = n_lab_results - n_err_free, #either error
-                           conf.level = 0.95,
-                           alternative = "two.sided",
-                           method = "CP")
-  }
-
-  # Resume editing here
-  # Need to figure out a way to fill table with NA's
-
-f_tbl <- data.frame("error_type" =
-                  c("false postive", "false negative", "either_error"),
-                  "n" = c(n_false_pos, n_false_neg, n_false_neg + n_false_pos),
-                  "min" =
-                  c(f_pos$conf.int[1], f_neg$conf.int[1], f_all$conf.int[1]),
-                  "mean" =
-                  c(f_pos$estimate, f_neg$estimate, f_all$estimate),
-                  "max" =
-                  c(f_pos$conf.int[2], f_neg$conf.int[2], f_all$conf.int[2]),
-                  "method" =
-                  c(f_pos$method, f_neg$method, f_all$method),
-                  "conf_level" =
-                  c(f_pos$conf.level, f_neg$conf.level, f_all$conf.level),
-                  "alternative" = c(f_pos$alternative, f_neg$alternative, f_all$alternative))
-
-  gt::gt(f_tbl) %>% gt::tab_header(paste0("error rates for ",
-                                            select_analyte)) %>%
-  gt::fmt_number(columns = c(3:5), n_sigfig = 3)
+  gt::gt(f_tbl) %>%
+    gt::tab_header(paste0("error rates for ", select_analyte)) %>%
+    gt::fmt_number(columns = c(6:8), n_sigfig = 3)
 }

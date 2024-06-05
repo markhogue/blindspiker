@@ -14,23 +14,14 @@
 #' @export
 plot_qq <- function(select_analyte,
                     dat = bs_df) {
+  analyte <- result <- spike_unit <- res_to_spike_ratio <- spike_value <- bs_df <- NULL
 
-  # To avoid visible binding note in package check:
-  analyte <- result <- spike_unit <- res_to_spike_ratio <-
-    spike_value <- bs_df <- NULL
-
-  df <- dat %>%
-    # keep only spiked values
-    dplyr::filter(analyte == select_analyte) %>%
+  df <- dat %>% dplyr::filter(analyte == select_analyte) %>%
     dplyr::filter(spike_value > 0) %>%
     dplyr::filter(result > 0) %>%
-    dplyr::mutate(res_to_spike_ratio = result / spike_value)
+    dplyr::mutate(res_to_spike_ratio = result/spike_value)
 
-ggplot2::ggplot(df, ggplot2::aes(sample = res_to_spike_ratio)) +
-  ggplot2::geom_qq() +
-  ggplot2::geom_qq_line() +
-  ggplot2::ggtitle(paste0("quantile-quantile plot of ", select_analyte,
-                 " results / spike values"))
-
+  stats::qqnorm(df$result[df$analyte == select_analyte & df$spike_value > 0],
+         main = paste0(select_analyte, " results"))
+  stats::qqline(df$result[df$analyte == select_analyte & df$spike_value > 0])
 }
-

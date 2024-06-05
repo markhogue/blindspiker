@@ -4,7 +4,13 @@
 \alias{plot_run}
 \title{Plot Run Chart}
 \usage{
-plot_run(select_analyte, dat = bs_df, version = "ratio", log = "n")
+plot_run(
+  select_analyte,
+  dat = bs_df,
+  version = "original",
+  log = "n",
+  removal_notification = "n"
+)
 }
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
@@ -17,6 +23,10 @@ or with the result shown as a `ratio` to the spike value.}
 
 \item{log}{Set log = "y" to make the y-axis a log scale - original version
 only. Default is "n".}
+
+\item{removal_notification}{provide a list of results, by
+sample_ID that were removed from the current run plot because
+results were less than or equal to zero.}
 }
 \description{
 `plot_run()` produces a Run Chart of the selected analyte. The analyte

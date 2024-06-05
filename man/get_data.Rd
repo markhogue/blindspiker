@@ -8,12 +8,14 @@ from comma separated variable text files.}
 get_data(spike_data, lab_data)
 }
 \arguments{
-\item{spike_data}{name of the file, with path, containing the spike values.
-Example form, "C:/my_directory/my_spike_data.csv".
+\item{spike_data}{name of the loaded dataset (no quotes) or the name
+of the file, with path, containing the spike values, in quotes.
+Example forms, my_spike_data, or "C:/my_directory/my_spike_data.csv".
 This file column headings must be as identified in the Details section.}
 
-\item{lab_data}{name of the file, with path, containing the laboratory
-results. Example form, "C:/my_directory/my_lab_data.csv".
+\item{lab_data}{name of the loaded dataset (no quotes) or the name
+of the file, with path, containing the laboratory results.
+Example forms, my_lab_data, or "C:/my_directory/my_lab_data.csv".
 This file column headings must be as identified in the Details section.}
 }
 \value{
