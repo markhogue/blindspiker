@@ -1,11 +1,12 @@
 ---
-title: "Using blindspiker"
+title: "Using-blindspiker"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using blindspiker}
+  %\VignetteIndexEntry{Using-blindspiker}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -14,8 +15,17 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-
+library(blindspiker)
 ```
+
+---
+title: "Using blindspiker"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using blindspiker}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
 The R package, `blindspiker`, was initially developed for the  Internal Dosimetry program at the Savannah River Site, based on an R script, "SRS Blind Spikes-4.R", written by Tom Labone. 
 
@@ -93,3 +103,4 @@ Laboratory results data details
 **`plot_tat` plots the laboratory turnaround time** for each spike sample.
 
 **`plot_qq` provides quantile-quantile plots** of the results. Random errors are expected to fluctuate in a normally distributed pattern. When the QQ plot shows a deviation from normal, further investigation in the underlying process may be needed.
+
