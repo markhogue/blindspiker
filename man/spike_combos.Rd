@@ -9,7 +9,7 @@ spike_combos(analytes, dat = bs_df)
 \arguments{
 \item{analytes}{a vector of analytes of interest}
 
-\item{dat}{data frame with all data needed as described in `get_data`.
+\item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.
 Default is `bs_df`.}
 }
 \description{
@@ -18,7 +18,7 @@ A summary of spiked samples is provided based on combinations of interest.
 \examples{
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
-example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
 spike_combos(analytes = c('unknownium', 'Sr-90'), dat = example_df)
 
 }

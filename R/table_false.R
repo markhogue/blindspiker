@@ -30,7 +30,7 @@
 #' @export
 #'
 table_false <- function (select_analyte, dat = bs_df) {
-  result <- err_type <- det_lvl <- analyte <- bs_df <- . <- NULL
+  result <- err_type <- det_lvl <- analyte <- bs_df <- . <- spike_value <- NULL
 
   my_analytes <- unique(dat$analyte)
 
