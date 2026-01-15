@@ -71,14 +71,14 @@
 #' @examples
 #' example_spike_data <- system.file("extdata", "spikevals.csv", package = "blindspiker")
 #' example_lab_data <- system.file("extdata", "labvals.csv", package = "blindspiker")
-#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#' example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
 #'
 #' @export
 
 bs_prep_and_analysis <- function(spike_data,
                            lab_data) {
 
-  analyte <- units <- spike_unit <- spike_value <- NULL
+  analyte <- units <- spike_unit <- spike_value <- sv_unc <- sv_k <- spike_value <- NULL
 
   #load spike data
   # Is the data already loaded or do we go get it?
