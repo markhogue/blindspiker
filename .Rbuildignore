@@ -6,3 +6,5 @@
 ^NEWS.Rmd$
 ^cran-comments.md$
 ^CRAN-SUBMISSION$
+^.github$
+^.gitignore$
