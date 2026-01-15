@@ -14,16 +14,51 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(blindspiker)
+
 ```
 
 The R package, `blindspiker`, was initially developed for the  Internal Dosimetry program at the Savannah River Site, based on an R script, "SRS Blind Spikes-4.R", written by Tom Labone. 
 
-The first step in using the package is to **load your data.** This is made easy **with the `get_data` ** function. This function reads in data directly from .csv files. 
+The first step in using the package is to use the `bs_prep_and_analysis` function. The package anticipates that your organization runs a blind spike program, providing test samples to a laboratory with known test values. Here, you need to supply two sets of data, the test sample data and the laboratory's analysis results. 
 
-Data must be supplied with column names indicated below:
+The `bs_prep_and_analysis` function requires two data sets. You can either load your data into R separately or use this function to load your comma separated variable (csv) file.
 
-Spike values must be in a comma separated variable file with the following column headers:
+The `bs_prep_and_analysis` function runs a check of the data names, checks data types, merges the data sets, and identifies false positive and false negative results.
+
+## Sample test data
+
+### Test data must haves: 
+
+* sample_ID
+* analyte
+* spike_value
+* spike_unit
+
+### Test data optional extras:
+* provider_lab
+* submission_date
+* sv_unc
+* sv_k
+
+## Laboratory results data
+
+### Laboratory results must haves:
+
+* sample_ID
+* analyte
+* result_date
+* result
+* unc (analysis uncertainty)
+* units
+* det_lvl (laboratory's detection level)
+
+### Laboratory results optional extras:
+
+* k (coverage factor)
+
+## Details
+
+Sample test data details
 
 * sample_ID = unique identifier for the sample
 * analyte = name of analyte in the sample
@@ -34,8 +69,7 @@ Spike values must be in a comma separated variable file with the following colum
 * sv_unc = uncertainty in the spike value - Optional, default = 0
 * sv_k = coverage factor for the spike value uncertainty - Optional, default = 2
 
-
-Laboratory values must be in a comma separated variable file with the following column headers:
+Laboratory results data details
 
 * sample_ID = unique identifier for the sample - must match spike data
 * analyte = name of analyte in the sample - must match spike data
@@ -45,8 +79,8 @@ Laboratory values must be in a comma separated variable file with the following 
 * unc = analysis uncertainty in same units as result
 * units = laboratory units - must match spike value units
 * det_lvl = laboratory's detection level
-      
-Spike values provided to the laboratory may be summarized with the following functions:
+
+**Save the results** of the `bs_prep_and_analysis` function. In examples, we use `bs_df` as the name of the saved blind spike data frame. You can then evaluate the saved data. The following functions are available:
 
 **`table_spike` summarizes all individual spike values** and
 
