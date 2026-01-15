@@ -3,12 +3,12 @@
 #' QQ plots by isotope
 #'
 #' @param select_analyte the selected analyte for this run chart
-#' @param dat data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.
 #' Default is `bs_df`.
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
-#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#' example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
 #' plot_qq(select_analyte = 'unknownium', dat = example_df)
 #'
 #' @export

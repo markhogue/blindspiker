@@ -2,7 +2,7 @@
 #'
 #' Make a table showing how many blind spike samples contained one or more analytes.
 #'
-#' @param dat data frame with all data needed as described in `get_data`.
+#' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.
 #'
 #' @seealso For combinations of analytes spiked in a single sample,
 #' see `spike_combos`.
@@ -10,7 +10,7 @@
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
-#' example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+#' example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
 #' table_spike(dat = example_df)
 #'
 #' @export

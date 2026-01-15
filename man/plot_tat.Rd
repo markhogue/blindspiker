@@ -9,7 +9,7 @@ plot_tat(select_analyte, dat = bs_df, target_days = 60)
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
 
-\item{dat}{data frame with all data needed as described in `get_data`.
+\item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.
 Default is `bs_df`.}
 
 \item{target_days}{The target turnaround time in days. Default = 60.}
@@ -20,7 +20,7 @@ Plot time for laboratory analysis by date (result date from lab - spiked sample 
 \examples{
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
-example_df <- get_data(spike_data = example_spike_data, lab_data = example_lab_data)
+example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
 plot_tat(select_analyte = 'unknownium', dat = example_df, target_days = 60)
 
 }
