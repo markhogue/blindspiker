@@ -7,4 +7,4 @@
 * devtools::check_rhub()
 
 ## R CMD check results
-There were no ERRORs, WARNINGS or NOTEs.
+There were no ERRORs or WARNINGS. There was a NOTE identifying this as a new package.

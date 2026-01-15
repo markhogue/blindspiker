@@ -1,5 +1,5 @@
 # blindspiker (version 0.2.0)
-***2026-01-15*** First CRAN release. Change the `get_data` function name to `bs_prep_and_analysis`, reflecting the fact that this function does all the necessary preparation and analysis. Identification of false positives and false negatives was updated. 
+***2026-01-15*** This is the first CRAN release. Change the `get_data` function name to `bs_prep_and_analysis`, reflecting the fact that this function does all the necessary preparation and analysis. Identification of false positives and false negatives was updated. 
 # blindspiker (version 0.1.2)
 ***2024-06-05*** Allow use of already loaded data. Other minor adjustments to functions.
 # blindspiker (version 0.1.1)
