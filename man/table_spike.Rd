@@ -9,6 +9,9 @@ table_spike(dat = bs_df)
 \arguments{
 \item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.}
 }
+\value{
+table of all analytes in blind spike samples
+}
 \description{
 Make a table showing how many blind spike samples contained one or more analytes.
 }

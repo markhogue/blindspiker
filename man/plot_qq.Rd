@@ -9,8 +9,10 @@ plot_qq(select_analyte, dat = bs_df)
 \arguments{
 \item{select_analyte}{the selected analyte for this run chart}
 
-\item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.
-Default is `bs_df`.}
+\item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.Default is `bs_df`.}
+}
+\value{
+quantile-quantile plot of laboratory results of spiked samples
 }
 \description{
 QQ plots by isotope

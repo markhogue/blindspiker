@@ -20,6 +20,8 @@
 #'  sample_ID that were removed from the current run plot because
 #'  results were less than or equal to zero.
 #'
+#'  @return run plot of laboratory analyses of spiked samples
+#'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
@@ -47,7 +49,7 @@ plot_run <- function(select_analyte,
     # user it was removed if desired.
     if (length(df2$sample_ID[df2$result <= 0]) > 0) {
       if(removal_notification == "y") {
-        cat("Removing results <= 0 for the following samples, \n")
+        message("Removing results <= 0 for the following samples, \n")
         print.data.frame(data.frame(sample_ID = df2$sample_ID[df2$result <= 0]))}
     }
 
@@ -106,7 +108,7 @@ plot_run <- function(select_analyte,
     unit_txt <- df$units[1]
     if (length(df$sample_ID[df$result <= 0]) > 0) {
       if(removal_notification == "y") {
-        cat("Removing results <= 0 for the following samples, \n")
+        message("Removing results <= 0 for the following samples, \n")
         print.data.frame(data.frame(sample_ID = df$sample_ID[df$result <= 0]))
       }
     }
@@ -153,7 +155,7 @@ plot_run <- function(select_analyte,
       ggplot2::labs(caption = paste0("submission date range ",
                                      date_range[1], " to ", date_range[2]))
     if (log == "y")
-      cat("log argument ignored for ratio version, \n")
+      message("log argument ignored for ratio version, \n")
     p <- p0
   }
   p

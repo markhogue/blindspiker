@@ -95,16 +95,16 @@ bs_prep_and_analysis <- function(spike_data,
       "provider_lab", "submission_date")
 
   if (!all(spike_names_check) == TRUE) {
-    cat("Column names in spike data do not all match, \n")
-    cat("Spike data names are: \n")
-    print(names(spike_df))
-    cat("\n")
-    cat("Allowed names are: \n")
-    print(c("sample_ID", "analyte", "spike_value", "sv_unc",
+    message("Column names in spike data do not all match, \n")
+    message("Spike data names are: \n")
+    message(names(spike_df))
+    message("\n")
+    message("Allowed names are: \n")
+    message(c("sample_ID", "analyte", "spike_value", "sv_unc",
             "sv_k", "spike_unit", "provider_lab", "submission_date"))
-    cat("\n")
-    cat("This name was unrecognized: \n")
-    print(names(spike_df)[which(spike_names_check == F)])
+    message("\n")
+    message("This name was unrecognized: \n")
+    message(names(spike_df)[which(spike_names_check == F)])
     stopifnot(all(spike_names_check) == TRUE)
   }
 
@@ -125,16 +125,16 @@ bs_prep_and_analysis <- function(spike_data,
 
   # check lab names
   if (!all(lab_names_check) == TRUE) {
-    cat("Column names in laboratory data do not all match, \n")
-    cat("Laboratory data names are: \n")
-    print(names(lab_df))
-    cat("\n")
-    cat("Allowed names are: \n")
-    print(c("sample_ID", "analyte", "result_date", "k", "result",
+    message("Column names in laboratory data do not all match, \n")
+    message("Laboratory data names are: \n")
+    message(names(lab_df))
+    message("\n")
+    message("Allowed names are: \n")
+    message(c("sample_ID", "analyte", "result_date", "k", "result",
             "unc", "units", "det_lvl"))
-    cat("\n")
-    cat("This name was unrecognized: \n")
-    print(names(lab_df)[which(lab_names_check == F)])
+    message("\n")
+    message("This name was unrecognized: \n")
+    message(names(lab_df)[which(lab_names_check == F)])
     stopifnot(all(lab_names_check) == TRUE)
   }
 
@@ -149,13 +149,13 @@ bs_prep_and_analysis <- function(spike_data,
   analyte_mismatch_ind <- !lab_analytes %in% spike_analytes
   analyte_mismatch <- lab_analytes[analyte_mismatch_ind]
   if (any(analyte_mismatch_ind == TRUE)) {
-    cat(paste0("WARNING: ", analyte_mismatch, " is reported by the lab, but is not in spike data. \n"))
+    message(paste0("WARNING: ", analyte_mismatch, " is reported by the lab, but is not in spike data. \n"))
   }
   else {
-    cat("Analytes check - lab data and spike analytes all match.")
+    message("Analytes check - lab data and spike analytes all match.")
   }
-  cat("\n")
-  cat("\n")
+  message("\n")
+  message("\n")
 
   # combine lab and spike data
   bs_df <- dplyr::full_join(spike_df, lab_df, by = c("sample_ID",
@@ -164,7 +164,7 @@ bs_prep_and_analysis <- function(spike_data,
   # Check for duplicated data
   dup_check <- duplicated(data.frame(bs_df$sample_ID, bs_df$analyte))
   if (any(dup_check == TRUE)) {
-    cat(paste0("sample_ID ",
+    message(paste0("sample_ID ",
                bs_df$sample_ID[which(dup_check == TRUE)], " is a duplicate"))
     stopifnot(`Duplicated sample_ID for same analyte` =
                 all(dup_check == FALSE))
@@ -218,19 +218,19 @@ bs_prep_and_analysis <- function(spike_data,
   unit_check <- unit_check[unit_check$units_same == FALSE, ]
   unit_check <- unit_check[!is.na(unit_check$units), ]
   if (length(unit_check$units_same) > 0) {
-    cat("WARNING: Some units don't match! See table below:")
-    cat("\n")
-    cat("\n")
+    message("WARNING: Some units don't match! See table below:")
+    message("\n")
+    message("\n")
     mismatches <- unit_check %>% dplyr::select(c(analyte,
                                                  units, spike_unit))
     mismatch_index <- !duplicated(mismatches)
     mismatches <- data.frame(mismatches[mismatch_index, ])
     names(mismatches) <- c("analyte", "lab unit", "spike unit")
-    print.data.frame(mismatches, row.names = F)
+    message(mismatches)
   }
   if (length(unit_check$units_same) == 0) {
-    cat("Unit check - spike units and lab units all match.")
-    cat("\n")
+    message("Unit check - spike units and lab units all match.")
+    message("\n")
   }
   bs_df
 }

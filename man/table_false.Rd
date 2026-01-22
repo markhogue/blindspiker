@@ -11,6 +11,9 @@ table_false(select_analyte, dat = bs_df)
 
 \item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.}
 }
+\value{
+table of false positive and false negative results
+}
 \description{
 Make a table with estimated confidence intervals for false negatives and
 false positives for an analyte in the data set.

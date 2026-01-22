@@ -3,8 +3,10 @@
 #' QQ plots by isotope
 #'
 #' @param select_analyte the selected analyte for this run chart
-#' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.
-#' Default is `bs_df`.
+#' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.Default is `bs_df`.
+#'
+#' @return quantile-quantile plot of laboratory results of spiked samples
+#'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')

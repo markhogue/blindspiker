@@ -12,10 +12,14 @@ spike_combos(analytes, dat = bs_df)
 \item{dat}{data frame with all data needed as described in `bs_prep_and_analysis`.
 Default is `bs_df`.}
 }
+\value{
+table of combinations of analytes in blind spikes
+}
 \description{
 A summary of spiked samples is provided based on combinations of interest.
 }
 \examples{
+
 example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)

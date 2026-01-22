@@ -8,7 +8,10 @@
 #'
 #' @param analytes a vector of analytes of interest
 #'
+#' @return table of combinations of analytes in blind spikes
+#'
 #' @examples
+#'
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
 #' example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
@@ -36,13 +39,13 @@ spike_combos <- function(analytes, dat = bs_df){
     just_analyte_cols <- spikes_wide %>%
     dplyr::select(all_of(cols_to_count))
 
-    cat("This is a list of all spiked samples meeting the selection criteria,
+    message("This is a list of all spiked samples meeting the selection criteria,
         \n")
 
-  print.data.frame(spikes_wide[(stats::complete.cases(just_analyte_cols)),
+  gt::gt(spikes_wide[(stats::complete.cases(just_analyte_cols)),
                                c(1, cols_to_count)])
 
-  cat(paste0("The total number of spiked samples meeting the selction criteria is: ",
+  message(paste0("The total number of spiked samples meeting the selction criteria is: ",
   length(spikes_wide$sample_ID[(stats::complete.cases(just_analyte_cols))])))
 
 }

@@ -4,6 +4,8 @@
 #'
 #' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.
 #'
+#' @return table of all analytes in blind spike samples
+#'
 #' @seealso For combinations of analytes spiked in a single sample,
 #' see `spike_combos`.
 #'

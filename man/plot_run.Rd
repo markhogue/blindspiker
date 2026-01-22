@@ -25,8 +25,10 @@ or with the result shown as a `ratio` to the spike value.}
 only. Default is "n".}
 
 \item{removal_notification}{provide a list of results, by
-sample_ID that were removed from the current run plot because
-results were less than or equal to zero.}
+ sample_ID that were removed from the current run plot because
+ results were less than or equal to zero.
+
+ @return run plot of laboratory analyses of spiked samples}
 }
 \description{
 `plot_run()` produces a Run Chart of the selected analyte. The analyte

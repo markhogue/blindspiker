@@ -14,6 +14,9 @@ Default is `bs_df`.}
 
 \item{target_days}{The target turnaround time in days. Default = 60.}
 }
+\value{
+turn-around-time plot
+}
 \description{
 Plot time for laboratory analysis by date (result date from lab - spiked sample submitted date)
 }

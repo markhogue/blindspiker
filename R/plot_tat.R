@@ -7,6 +7,8 @@
 #' Default is `bs_df`.
 #' @param target_days The target turnaround time in days. Default = 60.
 #'
+#' @return turn-around-time plot
+#'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')

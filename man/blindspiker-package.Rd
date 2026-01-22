@@ -4,7 +4,7 @@
 \name{blindspiker-package}
 \alias{blindspiker}
 \alias{blindspiker-package}
-\title{blindspiker: LABORATORY BLIND SPIKE SAMPLE ANALYSES}
+\title{blindspiker: Laboratory Blind Spike Sample Analyses}
 \description{
 A blind spike program provides samples to a laboratory in order to perform quality control (QC) checks. The samples provided are of a known quantity to the tester. The laboratory is typically uninformed of that the sample provided is a QC sample.
 }

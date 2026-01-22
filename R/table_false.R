@@ -21,6 +21,8 @@
 #' @param select_analyte the selected analyte for this table
 #' @param dat data frame with all data needed as described in `bs_prep_and_analysis`.
 #'
+#' @return table of false positive and false negative results
+#'
 #' @examples
 #' example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
 #' example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')

@@ -1,5 +1,5 @@
 Package: blindspiker
-Title: LABORATORY BLIND SPIKE SAMPLE ANALYSES
+Title: Laboratory Blind Spike Sample Analyses
 Version: 0.2.0
 Authors@R: 
     person(given = "Mark",
