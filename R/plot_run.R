@@ -50,7 +50,7 @@ plot_run <- function(select_analyte,
     if (length(df2$sample_ID[df2$result <= 0]) > 0) {
       if(removal_notification == "y") {
         message("Removing results <= 0 for the following samples, \n")
-        print.data.frame(data.frame(sample_ID = df2$sample_ID[df2$result <= 0]))}
+        message(data.frame(sample_ID = df2$sample_ID[df2$result <= 0]))}
     }
 
     df2 <- df2 %>%
@@ -109,7 +109,7 @@ plot_run <- function(select_analyte,
     if (length(df$sample_ID[df$result <= 0]) > 0) {
       if(removal_notification == "y") {
         message("Removing results <= 0 for the following samples, \n")
-        print.data.frame(data.frame(sample_ID = df$sample_ID[df$result <= 0]))
+        message(data.frame(sample_ID = df$sample_ID[df$result <= 0]))
       }
     }
     df <- df %>%

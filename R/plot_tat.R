@@ -27,13 +27,13 @@ plot_tat <- function(select_analyte, dat = bs_df, target_days = 60) {
   if (any(is.na(df$tat))) {
     broken <- df %>% dplyr::filter(is.na(df$tat)) %>%
       dplyr::select(sample_ID)
-    cat(paste0("ID's with date not being read: ", broken))
+    message(paste0("ID's with date not being read: ", broken))
     df <- df %>% dplyr::filter(!is.na(tat))
   }
 
   if (any(df$tat < 0)) {
     broken <- df %>% dplyr::filter(df$tat < 0)
-    cat(paste0("ID's with negative tat's: ", broken$sample_ID, "\n"))
+    message(paste0("ID's with negative tat's: ", broken$sample_ID, "\n"))
   }
 
 
