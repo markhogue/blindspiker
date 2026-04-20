@@ -12,5 +12,4 @@
 #'   \item{units}{units of measure}
 #'   \item{provider_lab}{origin of spike sample}
 #'   \item{submission_date}{date provided to lab}
-#' }
-`spikevals`
+#'   }
