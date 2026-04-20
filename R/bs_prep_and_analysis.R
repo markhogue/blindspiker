@@ -72,7 +72,6 @@
 #' example_df <- bs_prep_and_analysis(spike_data = spikevals, lab_data = labvals)
 #'
 #' @export
-
 bs_prep_and_analysis <- function(spike_data,
                            lab_data) {
 

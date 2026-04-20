@@ -21,9 +21,7 @@ turn-around-time plot
 Plot time for laboratory analysis by date (result date from lab - spiked sample submitted date)
 }
 \examples{
-example_spike_data <- system.file('extdata', 'spikevals.csv', package = 'blindspiker')
-example_lab_data <- system.file('extdata', 'labvals.csv', package = 'blindspiker')
-example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
+example_df <- bs_prep_and_analysis(spike_data = spikevals, lab_data = labvals)
 plot_tat(select_analyte = 'unknownium', dat = example_df, target_days = 60)
 
 }
