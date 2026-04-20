@@ -79,8 +79,6 @@ Use this function to load the spike data and establish a data frame named
 this data set.
 }
 \examples{
-example_spike_data <- system.file("extdata", "spikevals.csv", package = "blindspiker")
-example_lab_data <- system.file("extdata", "labvals.csv", package = "blindspiker")
-example_df <- bs_prep_and_analysis(spike_data = example_spike_data, lab_data = example_lab_data)
+example_df <- bs_prep_and_analysis(spike_data = spikevals, lab_data = labvals)
 
 }
