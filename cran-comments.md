@@ -1,3 +1,6 @@
+## Update blindspiker to version 0.2.1 
+This version is created to add checking inputs for proper structure. Test data has been moved and documented.
+
 ## Initial Submission of blindspiker
 
 ## Test environments
