@@ -80,142 +80,129 @@ bs_prep_and_analysis <- function(spike_data,
 
   analyte <- units <- spike_unit <- spike_value <- sv_unc <- sv_k <- spike_value <- NULL
 
-  #load spike data
-  # Is the data already loaded or do we go get it?
-  # If spike_data is entered as character name of a data file:
-  if(is.character(spike_data))  spike_df <- utils::read.csv(file = spike_data)
+  # If the data arguments are in quotes (character data), then data must be read in.
+  if (is.character(spike_data)) spike_df <- utils::read.csv(file = spike_data)
+  if (is.character(lab_data)) lab_df <- utils::read.csv(file = lab_data)
 
-  # Otherwise, it's already loaded, let's use it!
-  if(!is.character(spike_data)) spike_df <- spike_data
 
-  # check spike names
-  spike_names_check <- names(spike_df) %in%
-    c("sample_ID", "analyte", "spike_value",
-      "sv_unc", "sv_k", "spike_unit",
-      "provider_lab", "submission_date")
+  # Spike Name Checks -------------------------------------------------------
+  spike_names_reqd <- c("sample_ID", "analyte", "spike_value", "spike_unit",
+                        "submission_date")
+  spike_names_opt <- c("sv_unc", "sv_k", "provider_lab")
 
-  if (!all(spike_names_check) == TRUE) {
-    message("Column names in spike data do not all match, \n")
-    message("Spike data names are: \n")
-    message(names(spike_df))
+  spike_reqd_TF <- spike_names_reqd %in% names(spike_data)
+  spike_reqd_missing <- spike_names_reqd[!spike_reqd_TF]
+
+  spike_opt_TF <-  spike_names_opt %in% names(spike_data)
+  spike_opt_missing <- spike_names_opt[!spike_opt_TF]
+
+  if (!all(spike_reqd_TF) == TRUE) {
+    message("Spike data is missing required columns, \n")
+    message("Missing: \n")
+    print.data.frame(as.data.frame(spike_reqd_missing))
     message("\n")
-    message("Allowed names are: \n")
-    message(c("sample_ID", "analyte", "spike_value", "sv_unc",
-            "sv_k", "spike_unit", "provider_lab", "submission_date"))
     message("\n")
-    message("This name was unrecognized: \n")
-    message(names(spike_df)[which(spike_names_check == F)])
-    stopifnot(all(spike_names_check) == TRUE)
   }
 
-  # set defaults where arguments not provided
-  #if (is.null(spike_df$sv_unc))
-  if(!"sv_unc" %in% names(spike_df))
-    spike_df$sv_unc <- 0
-  if(!"sv_k" %in% names(spike_df))
-    spike_df$sv_k <- 2
-
-  # load lab data
-  if(is.character(lab_data))  lab_df <- utils::read.csv(file = lab_data)
-  if(!is.character(lab_data)) lab_df <- lab_data
-
-  lab_names_check <- names(lab_df) %in%
-    c("sample_ID", "analyte", "result_date",
-      "k", "result", "unc", "units", "det_lvl")
-
-  # check lab names
-  if (!all(lab_names_check) == TRUE) {
-    message("Column names in laboratory data do not all match, \n")
-    message("Laboratory data names are: \n")
-    message(names(lab_df))
+  if (!all(spike_opt_TF) == TRUE) {
+    message("Spike data is missing optional columns. Defaults will be used where needed, \n")
+    message("Missing: \n")
+    print.data.frame(as.data.frame(spike_opt_missing))
     message("\n")
-    message("Allowed names are: \n")
-    message(c("sample_ID", "analyte", "result_date", "k", "result",
-            "unc", "units", "det_lvl"))
+  }
+  if (!"sv_unc" %in% names(spike_data))
+    spike_data$sv_unc <- 0
+  if (!"sv_k" %in% names(spike_data))
+    spike_data$sv_k <- 2
+
+  # Lab Name Checks -------------------------------------------------------
+  lab_names_reqd <- c("sample_ID", "analyte",
+                      "result_date", "result", "unc", "units", "det_lvl")
+  lab_names_opt <- "k"
+
+  lab_reqd_TF <- lab_names_reqd %in% names(lab_data)
+  lab_reqd_missing <- lab_names_reqd[!lab_reqd_TF]
+
+  lab_opt_TF <-  lab_names_opt %in% names(lab_data)
+  lab_opt_missing <- lab_names_opt[!lab_opt_TF]
+
+  if (!all(lab_reqd_TF) == TRUE) {
+    message("Lab data is missing required columns, \n")
+    message("Missing: \n")
+    print.data.frame(as.data.frame(lab_reqd_missing))
     message("\n")
-    message("This name was unrecognized: \n")
-    message(names(lab_df)[which(lab_names_check == F)])
-    stopifnot(all(lab_names_check) == TRUE)
+    message("\n")
   }
 
-  # set lab defaults if arguments not passed
-  #if (is.null(lab_df$k))
-  if(!"k" %in% names(lab_df))
-    lab_df$k <- 2
+  if (!all(lab_opt_TF) == TRUE) {
+    message("lab data is missing optional columns. Defaults will be used where needed, \n")
+    message("Missing: \n")
+    print.data.frame(as.data.frame(lab_opt_missing))
+    message("\n")
+  }
 
-  # check analyte match between lab and spike
-  spike_analytes <- unique(spike_df$analyte)
-  lab_analytes <- unique(lab_df$analyte)
+  if (!"k" %in% names(lab_data)) lab_data$k <- 2
+
+  # Identify all analytes ---------------------------------------------------
+
+  spike_analytes <- unique(spike_data$analyte)
+  lab_analytes <- unique(lab_data$analyte)
+
   analyte_mismatch_ind <- !lab_analytes %in% spike_analytes
   analyte_mismatch <- lab_analytes[analyte_mismatch_ind]
-  if (any(analyte_mismatch_ind == TRUE)) {
-    message(paste0("WARNING: ", analyte_mismatch, " is reported by the lab, but is not in spike data. \n"))
-  }
-  else {
-    message("Analytes check - lab data and spike analytes all match.")
+  if(any(analyte_mismatch_ind == TRUE)){
+    message("The following analytes were reported by the lab, but they not in spike data. \n")
+    print.data.frame(as.data.frame(analyte_mismatch))
   }
   message("\n")
-  message("\n")
 
-  # combine lab and spike data
-  bs_df <- dplyr::full_join(spike_df, lab_df, by = c("sample_ID",
-                                                     "analyte"))
+  # Make combined data frame ------------------------------------------------
 
-  # Check for duplicated data
+  bs_df <- dplyr::full_join(spike_data, lab_data, by = c("sample_ID",
+                                                         "analyte"))
   dup_check <- duplicated(data.frame(bs_df$sample_ID, bs_df$analyte))
   if (any(dup_check == TRUE)) {
-    message(paste0("sample_ID ",
-               bs_df$sample_ID[which(dup_check == TRUE)], " is a duplicate"))
-    stopifnot(`Duplicated sample_ID for same analyte` =
-                all(dup_check == FALSE))
+    message(paste0("sample_ID ", bs_df$sample_ID[which(dup_check ==
+                                                         TRUE)], " is a duplicate"))
+    stopifnot(`Duplicated sample_ID for same analyte` = all(dup_check ==
+                                                              FALSE))
   }
-
-  # fix data types
   bs_df$sample_ID <- as.character(bs_df$sample_ID)
   bs_df <- bs_df[order(bs_df$result_date), ]
   bs_df$result_date <- as.Date(bs_df$result_date)
   bs_df$submission_date <- as.Date(bs_df$submission_date)
-
-  # if no spike value, make it 0
+  bs_df$spike_value <- as.numeric(bs_df$spike_value)
   bs_df$spike_value[is.na(bs_df$spike_value)] <- 0
 
-  # err_type generation
-  bs_df <- bs_df %>% dplyr::mutate(
-    err_type = dplyr::case_when(
-      result < det_lvl & spike_value > det_lvl ~ "false_neg",
-      result > det_lvl & spike_value == 0 ~ "false_pos",
-      TRUE ~ "no_err_cat")
-  )
+  # Error types -------------------------------------------------------------
 
-  # add overlap details, then we'll have one more error cat
-  bs_df <- bs_df %>%
-    dplyr::mutate(low_res = dplyr::case_when(
-      result > det_lvl ~ result - (unc * 2/k),
-      TRUE ~ result)) %>%
+  bs_df <- bs_df %>% dplyr::mutate(err_type = dplyr::case_when(result <
+                                                                 det_lvl & spike_value > det_lvl ~ "false_neg", result >
+                                                                 det_lvl & spike_value == 0 ~ "false_pos", TRUE ~ "no_err_cat"))
+
+  bs_df <- bs_df %>% dplyr::mutate(low_res = dplyr::case_when(result >
+                                                                det_lvl ~ result - (unc * 2/k), TRUE ~ result)) %>%
     dplyr::mutate(high_res = dplyr::case_when(result >
-                                                det_lvl ~ result + (unc * 2/k), TRUE ~ result)) %>%
-    dplyr::mutate(low_spike = spike_value - (sv_unc *
-                                               2/sv_k)) %>% dplyr::mutate(high_spike = spike_value +
-                                                                            (sv_unc * 2/sv_k)) %>%
+                                                det_lvl ~ result + (unc * 2/k), TRUE ~ result))
 
-    # spike overlap codes: 1 = no overlap
-    #                      0 = overlap
+  bs_df$low_spike <- bs_df$spike_value - (bs_df$sv_unc * 2 / bs_df$sv_k)
+  bs_df$high_spike <- bs_df$spike_value + (bs_df$sv_unc * 2 / bs_df$sv_k)
+  bs_df %>% dplyr::mutate(spike_overlap =
+                            as.factor(dplyr::case_when(low_res > high_spike ~ 1,
+                                                       high_res < low_spike ~ 1,
+                                                       TRUE ~ 0)))
 
-    dplyr::mutate(spike_overlap = as.factor(
-      dplyr::case_when(low_res > high_spike ~ 1,
-                       high_res < low_spike ~ 1,
-                       TRUE ~ 0)))
 
-  # add error category
-  bs_df$err_type[which(bs_df$err_type == "no_err_cat" &
-                         bs_df$spike_overlap == 1 &
-                         bs_df$spike_value > 0)] <- "range"
+  bs_df$err_type[which(bs_df$err_type == "no_err_cat" & bs_df$spike_overlap ==
+                         1 & bs_df$spike_value > 0)] <- "range"
 
-  # check that units match
+
+  # unit checks -------------------------------------------------------------
 
   unit_check <- bs_df %>% dplyr::filter(spike_value > 0)
   unit_check$units_same <- unit_check$units == unit_check$spike_unit
-  unit_check <- unit_check[unit_check$units_same == FALSE, ]
+  unit_check <- unit_check[unit_check$units_same == FALSE,
+  ]
   unit_check <- unit_check[!is.na(unit_check$units), ]
   if (length(unit_check$units_same) > 0) {
     message("WARNING: Some units don't match! See table below:")

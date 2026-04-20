@@ -1,6 +1,6 @@
 Package: blindspiker
 Title: Laboratory Blind Spike Sample Analyses
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person(given = "Mark",
            family = "Hogue",
