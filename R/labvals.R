@@ -12,3 +12,4 @@
 #'   \item{units}{units of measure}
 #'   \item{det_lvl}{minimum level of detection}
 #'   }
+"labvals"
